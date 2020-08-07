@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoFrameAnalyzerLib", "Vi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CongestionCameraConsoleApp", "CongestionCameraConsoleApp\CongestionCameraConsoleApp.csproj", "{5DBDEF4F-AC91-49E5-B00D-FC84A5D71213}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CongestionMonitorFunctionApp", "CongestionMonitorFunctionApp\CongestionMonitorFunctionApp.csproj", "{954DE442-D6A5-4C49-A147-F6BE55F0204B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{5DBDEF4F-AC91-49E5-B00D-FC84A5D71213}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DBDEF4F-AC91-49E5-B00D-FC84A5D71213}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DBDEF4F-AC91-49E5-B00D-FC84A5D71213}.Release|Any CPU.Build.0 = Release|Any CPU
+		{954DE442-D6A5-4C49-A147-F6BE55F0204B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{954DE442-D6A5-4C49-A147-F6BE55F0204B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{954DE442-D6A5-4C49-A147-F6BE55F0204B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{954DE442-D6A5-4C49-A147-F6BE55F0204B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
