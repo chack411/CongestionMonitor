@@ -10,7 +10,7 @@ namespace CongestionMonitorFunctionApp
         [FunctionName("GetSignalRInfo")]
         public static SignalRConnectionInfo GetSignalRInfo(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req,
-            [SignalRConnectionInfo(HubName = "congestions")] SignalRConnectionInfo connectionInfo)
+            [SignalRConnectionInfo(HubName = "congestion")] SignalRConnectionInfo connectionInfo)
         {
             return connectionInfo;
         }
