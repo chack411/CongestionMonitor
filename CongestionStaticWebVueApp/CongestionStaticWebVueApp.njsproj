@@ -31,11 +31,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include=".env" />
-    <Content Include=".env.development" />
     <Content Include=".env.local" />
+    <Content Include=".env.development" />
     <Content Include=".env.development.local" />
+    <Content Include="public\css\site.css" />
     <Content Include="public\favicon.ico" />
     <Content Include="public\index.html" />
+    <Content Include="public\routes.json" />
     <Content Include="src\App.vue" />
     <Content Include="package.json" />
     <Content Include="README.md" />
@@ -43,6 +45,7 @@
   <ItemGroup>
     <Folder Include="dist\" />
     <Folder Include="public\" />
+    <Folder Include="public\css\" />
     <Folder Include="src\" />
     <Folder Include="src\assets\" />
   </ItemGroup>
