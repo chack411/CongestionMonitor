@@ -267,6 +267,8 @@ FakesAssemblies/
 *.GhostDoc.xml
 
 # Node.js Tools for Visual Studio
+.env.local
+.env.*.local
 .ntvs_analysis.dat
 node_modules/
 
