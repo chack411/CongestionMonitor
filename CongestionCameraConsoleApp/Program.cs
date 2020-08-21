@@ -34,8 +34,8 @@
 using System;
 using System.Collections.Generic;
 using VideoFrameAnalyzer;
-using Microsoft.ProjectOxford.Face;
-using Microsoft.ProjectOxford.Face.Contract;
+using Microsoft.Azure.CognitiveServices.Vision.Face;
+using Microsoft.Azure.CognitiveServices.Vision.Face.Models;
 using Microsoft.Extensions.Configuration;
 using CosmosDBLib;
 
@@ -61,9 +61,18 @@ namespace CongestionCameraConsoleApp
             if (!appSettings.IsValid()) return;
 
             // Create Face API Client.
-            FaceServiceClient faceClient = new FaceServiceClient(
-                appSettings.Face_API_Subscription_Key, 
-                appSettings.Face_API_Endpoint);
+            var faceClient = new FaceClient(new ApiKeyServiceClientCredentials(appSettings.Face_API_Subscription_Key)) { Endpoint = appSettings.Face_API_Endpoint };
+            IList<FaceAttributeType?> faceAttributes = new FaceAttributeType?[]
+            {
+                FaceAttributeType.Age,
+                FaceAttributeType.Gender,
+                FaceAttributeType.Smile,
+                FaceAttributeType.FacialHair,
+                FaceAttributeType.HeadPose,
+                FaceAttributeType.Glasses,
+                FaceAttributeType.Emotion,
+                FaceAttributeType.Accessories
+            };
 
             // Create CosmosDB Client.
             FaceCountDB faceCountDB = new FaceCountDB(
@@ -79,7 +88,7 @@ namespace CongestionCameraConsoleApp
             }
 
             // Create grabber. 
-            FrameGrabber<Face[]> grabber = new FrameGrabber<Face[]>();
+            FrameGrabber<IList<DetectedFace>> grabber = new FrameGrabber<IList<DetectedFace>>();
 
             // Check Cameras.
             // At this time, there is a memory leak issue in Opencv 4.*
@@ -107,8 +116,8 @@ namespace CongestionCameraConsoleApp
             // Set up Face API call.
             grabber.AnalysisFunction = async frame =>
             {
-                // Encode image and submit to Face API. 
-                return await faceClient.DetectAsync(frame.Image.ToMemoryStream(".jpg"));
+                // Encode image and submit to Face API.
+                return await faceClient.Face.DetectWithStreamAsync(frame.Image.ToMemoryStream(".jpg"), true, false, faceAttributes);
             };
 
             // Set up a listener for when we receive a new result from an API call. 
@@ -120,8 +129,9 @@ namespace CongestionCameraConsoleApp
                     Console.WriteLine("API call threw an exception.");
                 else
                 {
-                    faceCountDB.UpdateFaceCount(e.Analysis.Length, appSettings.PlaceName);
-                    Console.WriteLine("New result received for frame acquired at {0}. {1} faces detected", e.Frame.Metadata.Timestamp, e.Analysis.Length);
+                    long maskCount = GetMaskCount(e.Analysis);
+                    faceCountDB.UpdateFaceCount(e.Analysis.Count, maskCount, appSettings.PlaceName);
+                    Console.WriteLine("New result received for frame acquired at {0}. {1} faces, {2} masks detected", e.Frame.Metadata.Timestamp, e.Analysis.Count, maskCount);
                 }
             };
 
@@ -139,6 +149,21 @@ namespace CongestionCameraConsoleApp
 
             // Stop, blocking until done.
             grabber.StopProcessingAsync().Wait();
+        }
+
+        private static long GetMaskCount(IList<DetectedFace> faces)
+        {
+            long maskCount = 0;
+            foreach (var face in faces)
+            {
+                foreach (var accessories in face.FaceAttributes.Accessories)
+                {
+                    if (accessories.Type == AccessoryType.Mask)
+                        ++maskCount;
+                }
+            }
+
+            return maskCount;
         }
 
         private static IDictionary<string, string> GetCommandLineSwitchMappings()

@@ -103,7 +103,7 @@ namespace CosmosDBLib
         //    await container.DeleteItemAsync<FaceItem>(item.Id, new PartitionKey(item.PlaceName));
         //}
 
-        public async void UpdateFaceCount(long faceCount, string placeName)
+        public async void UpdateFaceCount(long faceCount, long maskCount, string placeName)
         {
             List<FaceItem> items = await GetResultItemsByPlace(placeName);
             if (items.Count == 0)
@@ -112,6 +112,7 @@ namespace CosmosDBLib
                 {
                     Id = string.Format("{0:10}_{1}", DateTime.Now.Ticks, Guid.NewGuid()),
                     FaceCount = faceCount,
+                    MaskCount = maskCount,
                     PlaceName = placeName,
                     RecordDateTime = DateTime.Now.ToString()
                 };
@@ -120,6 +121,7 @@ namespace CosmosDBLib
             else
             {
                 items[0].FaceCount = faceCount;
+                items[0].MaskCount = maskCount;
                 items[0].RecordDateTime = DateTime.Now.ToString();
                 await ReplaceFaceItem(items[0]);
             }
@@ -132,6 +134,8 @@ namespace CosmosDBLib
         public string Id { get; set; }
 
         public long FaceCount { get; set; }
+
+        public long MaskCount { get; set; }
 
         public string PlaceName { get; set; }
 
