@@ -227,8 +227,10 @@ namespace VideoFrameAnalyzer
                         if (_reader.CaptureType == CaptureType.File)
                         {
                             LogMessage("Producer: null frame from video file, stop!");
+
                             // This will call StopProcessing on a new thread.
                             var stopTask = StopProcessingAsync();
+
                             // Break out of the loop to make sure we don't try grabbing more
                             // frames. 
                             break;
