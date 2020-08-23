@@ -44,3 +44,7 @@ body {
 .trend-indicator {
     text-align: center;
 }
+
+.mask-ratio {
+    text-align: right;
+}

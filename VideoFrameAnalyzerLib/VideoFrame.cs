@@ -48,7 +48,7 @@ namespace VideoFrameAnalyzer
     ///     some arbitrary data to each frame as it flows through the pipeline. </summary>
     public class VideoFrame
     {
-        /// <summary> Constructor. </summary>
+        /// <summary> Constructor </summary>
         /// <param name="image">    The image captured by the camera. </param>
         /// <param name="metadata"> The metadata. </param>
         public VideoFrame(Mat image, VideoFrameMetadata metadata)
@@ -57,7 +57,7 @@ namespace VideoFrameAnalyzer
             Metadata = metadata;
         }
 
-        /// <summary> Gets the image for the frame. </summary>
+        /// <summary> Gets the image for the frame </summary>
         /// <value> The image. </value>
         public Mat Image { get; }
 
@@ -65,7 +65,7 @@ namespace VideoFrameAnalyzer
         /// <value> The metadata. </value>
         public VideoFrameMetadata Metadata { get; }
 
-        /// <summary> Gets or sets the frame's "user data". </summary>
+        /// <summary> Gets or sets the frame's "user data" </summary>
         /// <value> Any additional data that the user would like to attach to a video frame. </value>
         public object UserData { get; set; } = null;
     }

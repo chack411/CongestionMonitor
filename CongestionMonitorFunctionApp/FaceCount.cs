@@ -13,11 +13,14 @@ namespace CongestionMonitorFunctionApp
         public static async Task Run([CosmosDBTrigger(
             databaseName: "FaceCount",
             collectionName: "Result1",
-            ConnectionStringSetting = "AzureCosmosDBFaceCountConnectionString",
-            LeaseCollectionName = "leases")]IReadOnlyList<Document> input,
+            LeaseCollectionName = "leases",
+            CreateLeaseCollectionIfNotExists = true,
+            ConnectionStringSetting = "AzureCosmosDBFaceCountConnectionString")]
+            IReadOnlyList<Document> input,
             [SignalR(
             HubName = "congestion",
-            ConnectionStringSetting = "AzureSignalRConnectionString")]IAsyncCollector<SignalRMessage> signalRMessages,
+            ConnectionStringSetting = "AzureSignalRConnectionString")]
+            IAsyncCollector<SignalRMessage> signalRMessages,
             ILogger log)
         {
             if (input != null && input.Count > 0)
