@@ -7,6 +7,7 @@
                     <th scope="col">Place</th>
                     <th scope="col">Count</th>
                     <th scope="col">Trend</th>
+                    <th scope="col">Mask</th>
                 </tr>
             </thead>
             <tr v-for="result in results" :key="result.id">
@@ -25,6 +26,13 @@
                     <transition name="mark" mode="out-in">
                         <span v-bind:style="{ color: result.indicatorColor }" :key="result.updown">
                             {{ result.updown }}
+                        </span>
+                    </transition>
+                </td>
+                <td class="mask-ratio">
+                    <transition name="fade" mode="out-in">
+                        <span :key="result.maskRatio">
+                            {{ result.maskRatio }} %
                         </span>
                     </transition>
                 </td>
@@ -136,13 +144,21 @@
                         Vue.set(result, 'indicatorColor', indicator.down.color);
                     }
 
+                    Vue.set(result, 'maskRatio', this.getMaskRatio(countResult));
                     Vue.set(result, 'faceCount', countResult.faceCount);
 
                 } else {
+                    countResult.maskRatio = this.getMaskRatio(countResult);
                     countResult.updown = indicator.stay.mark;
                     countResult.indicatorColor = indicator.stay.color;
                     this.results.push(countResult);
                 }
+            },
+            getMaskRatio(result) {
+                if (result.faceCount > 0)
+                    return result.maskCount / result.faceCount * 100;
+                else
+                    return 0;
             }
         }
     }
