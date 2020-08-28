@@ -1,0 +1,112 @@
+# .NET Core Function App to Windows on Azure
+# Build a .NET Core function app and deploy it to Azure as a Windows function App.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- master
+
+variables:
+  # Azure Resource Manager connection created during pipeline creation
+  azureSubscription: 'e5539dec-f14a-4c79-912a-8e0f50efc5e6'
+
+  # Function app name
+  functionAppName: 'cm-functionsapp'
+  slotStagingName: 'staging'
+  slotDevName: 'dev'
+
+  # Agent VM image name
+  vmImageName: 'vs2017-win2016'
+
+  # Working Directory
+  workingDirectory: '$(System.DefaultWorkingDirectory)/CongestionMonitorFunctionApp'
+
+  # .NET Core configrations
+  dotnetVersion: '3.1.x'
+  buildConfiguration: 'Release'
+
+stages:
+- stage: Build
+  displayName: 'Build Azure Functions App'
+
+  jobs:
+  - job: Build
+    displayName: 'Build Function App'
+    pool:
+      vmImage: $(vmImageName)
+
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Install latest .NET Core SDK'
+      inputs:
+        packageType: sdk
+        version: $(dotnetVersion)
+        installationPath: $(Agent.ToolsDirectory)/dotnet
+
+    - task: DotNetCoreCLI@2
+      displayName: 'dotnet build'
+      inputs:
+        command: 'build'
+        projects: |
+          $(workingDirectory)/*.csproj
+        arguments: --output $(workingDirectory)/publish_output --configuration $(buildConfiguration)
+
+    - task: ArchiveFiles@2
+      displayName: 'Archive files'
+      inputs:
+        rootFolderOrFile: '$(workingDirectory)/publish_output'
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+        replaceExistingArchive: true
+
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+      artifact: drop
+
+- stage: Deploy_Staging
+  displayName: 'Deploy Staging'
+  dependsOn: Build
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  jobs:
+  - deployment: Deploy_Staging
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'development'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureFunctionApp@1
+            displayName: 'Azure functions app deploy'
+            inputs:
+              azureSubscription: '$(azureSubscription)'
+              appType: functionApp
+              appName: $(functionAppName)
+              package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
+              AppSettings: -AzureWebJobsStorage $(AzureWebJobsStorage) -AzureCosmosDBFaceCountConnectionString $(AzureCosmosDBFaceCountConnectionString) -AzureSignalRConnectionString $(AzureSignalRConnectionString)
+              # deployToSlotOrASE: true
+              # slotName: $(slotStagingName)
+
+- stage: Deploy_PR
+  displayName: 'Deploy PR'
+  dependsOn: Build
+  condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+  jobs:
+  - deployment: Deploy_PR
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'development-pr'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureFunctionApp@1
+            displayName: 'Azure functions app deploy'
+            inputs:
+              azureSubscription: '$(azureSubscription)'
+              appType: functionApp
+              appName: $(functionAppName)
+              package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
+              AppSettings: -AzureWebJobsStorage $(AzureWebJobsStorage) -AzureCosmosDBFaceCountConnectionString $(AzureCosmosDBFaceCountConnectionString) -AzureSignalRConnectionString $(AzureSignalRConnectionString)
+              deployToSlotOrASE: true
+              slotName: $(slotDevName)
