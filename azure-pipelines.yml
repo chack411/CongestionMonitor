@@ -39,6 +39,7 @@ stages:
     #   displayName: 'dotnet build'
     #   inputs:
     #     command: 'build'
+    #     publishWebProjects: false
     #     projects: |
     #       $(workingDirectory)/*.csproj
     #     arguments: --output $(workingDirectory)/publish_output --configuration $(buildConfiguration)
@@ -47,6 +48,7 @@ stages:
       displayName: 'dotnet publish'
       inputs:
         command: 'publish'
+        publishWebProjects: false
         projects: |
           $(workingDirectory)/*.csproj
         arguments: --output $(workingDirectory)/publish_output --configuration $(buildConfiguration)
