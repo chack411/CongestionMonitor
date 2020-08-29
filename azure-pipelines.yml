@@ -1,0 +1,55 @@
+# .NET Core Console Application
+
+trigger:
+- master
+
+variables:
+  # Azure Resource Manager connection created during pipeline creation
+  azureSubscription: 'e5539dec-f14a-4c79-912a-8e0f50efc5e6'
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+  # Working Directory
+  workingDirectory: '$(System.DefaultWorkingDirectory)/CongestionCameraConsoleApp'
+
+  # .NET Core configrations
+  dotnetVersion: '3.1.x'
+  buildConfiguration: 'Release'
+
+stages:
+- stage: Build
+  displayName: 'Build .NET Core App'
+
+  jobs:
+  - job: Build
+    displayName: 'Build Console App'
+    pool:
+      vmImage: $(vmImageName)
+
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Install latest .NET Core SDK'
+      inputs:
+        packageType: sdk
+        version: $(dotnetVersion)
+        installationPath: $(Agent.ToolsDirectory)/dotnet
+
+    # - task: DotNetCoreCLI@2
+    #   displayName: 'dotnet build'
+    #   inputs:
+    #     command: 'build'
+    #     projects: |
+    #       $(workingDirectory)/*.csproj
+    #     arguments: --output $(workingDirectory)/publish_output --configuration $(buildConfiguration)
+
+    - task: DotNetCoreCLI@2
+      displayName: 'dotnet publish'
+      inputs:
+        command: 'publish'
+        projects: |
+          $(workingDirectory)/*.csproj
+        arguments: --output $(workingDirectory)/publish_output --configuration $(buildConfiguration)
+
+    - publish: $(workingDirectory)/publish_output
+      artifact: drop
