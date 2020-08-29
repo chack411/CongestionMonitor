@@ -89,7 +89,7 @@ stages:
               appType: functionApp
               appName: $(functionAppName)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
-              AppSettings: -AzureWebJobsStorage $(AzureWebJobsStorage) -AzureCosmosDBFaceCountConnectionString $(AzureCosmosDBFaceCountConnectionString) -AzureSignalRConnectionString $(AzureSignalRConnectionString)
+              AppSettings: -AzureWebJobsStorage $(AzureWebJobsStorage2) -AzureCosmosDBFaceCountConnectionString $(AzureCosmosDBFaceCountConnectionString2) -AzureSignalRConnectionString $(AzureSignalRConnectionString2)
               # deployToSlotOrASE: true
               # slotName: $(slotStagingName)
 
