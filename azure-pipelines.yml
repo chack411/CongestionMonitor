@@ -8,8 +8,7 @@ trigger:
     include:
       - CongestionCameraConsoleApp/*
       - VideoFrameAnalyzerLib/*
-      - Pipelines/*
-      - azure-pipelines.yml
+      - Pipelines/azure-pipelines-console.yml
 
 variables:
   # Azure Resource Manager connection created during pipeline creation
