@@ -22,7 +22,7 @@ variables:
   slotDevName: 'dev'
 
   # Agent VM image name
-  vmImageName: 'vs2017-win2016'
+  vmImageName: 'windows-latest'
 
   # Working Directory
   workingDirectory: '$(System.DefaultWorkingDirectory)/CongestionMonitorFunctionApp'
