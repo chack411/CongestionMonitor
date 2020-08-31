@@ -54,5 +54,5 @@ steps:
       Write-Host '$(cm-arm-deployment-outputs)'
       $var=ConvertFrom-Json '$(cm-arm-deployment-outputs)'
       $value=$var.face_API_Endpoint.value
-      Write-Host '$value'
+      Write-Host $value
       # Write-Host "##vso[task.setvariable variable=storageAccount;]$value"
