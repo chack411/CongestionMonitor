@@ -1,0 +1,356 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "SignalR_cm_hub_name": {
+            "defaultValue": "cm-hub",
+            "type": "String"
+        },
+        "accounts_cm_faceapi_name": {
+            "defaultValue": "cm-faceapi",
+            "type": "String"
+        },
+        "databaseAccounts_cm_facesdb_name": {
+            "defaultValue": "cm-facesdb",
+            "type": "String"
+        },
+        "sites_cm_functionsapp_name": {
+            "defaultValue": "cm-functionsapp",
+            "type": "String"
+        },
+        "components_cm_functionsapp_name": {
+            "defaultValue": "cm-functionsapp",
+            "type": "String"
+        },
+        "serverfarms_cm_functionsapp_asp_name": {
+            "defaultValue": "cm-functionsapp-asp",
+            "type": "String"
+        },
+        "storageAccounts_cmfuncstorageaccount_name": {
+            "defaultValue": "cmfuncstorageaccount",
+            "type": "String"
+        },
+        "location": {
+            "defaultValue": "[resourceGroup().location]",
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.CognitiveServices/accounts",
+            "apiVersion": "2017-04-18",
+            "name": "[parameters('accounts_cm_faceapi_name')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "S0"
+            },
+            "kind": "Face",
+            "properties": {
+                "customSubDomainName": "[parameters('accounts_cm_faceapi_name')]",
+                "publicNetworkAccess": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.DocumentDB/databaseAccounts",
+            "apiVersion": "2020-06-01-preview",
+            "name": "[parameters('databaseAccounts_cm_facesdb_name')]",
+            "location": "[parameters('location')]",
+            "kind": "GlobalDocumentDB",
+            "tags": {
+                "defaultExperience": "Core (SQL)",
+                "hidden-cosmos-mmspecial": "",
+                "CosmosAccountType": "Production"
+            },
+            "properties": {
+                "publicNetworkAccess": "Enabled",
+                "enableAutomaticFailover": false,
+                "enableMultipleWriteLocations": true,
+                "isVirtualNetworkFilterEnabled": false,
+                "virtualNetworkRules": [],
+                "disableKeyBasedMetadataWriteAccess": false,
+                "enableFreeTier": false,
+                "enableAnalyticalStorage": false,
+                "createMode": "Default",
+                "databaseAccountOfferType": "Standard",
+                "consistencyPolicy": {
+                    "defaultConsistencyLevel": "Session",
+                    "maxIntervalInSeconds": 5,
+                    "maxStalenessPrefix": 100
+                },
+                "locations": [
+                    {
+                        "locationName": "[parameters('location')]",
+                        "provisioningState": "Succeeded",
+                        "failoverPriority": 0,
+                        "isZoneRedundant": false
+                    }
+                ],
+                "capabilities": [],
+                "ipRules": [],
+                "backupPolicy": {
+                    "type": "Periodic",
+                    "periodicModeProperties": {
+                        "backupIntervalInMinutes": 1440,
+                        "backupRetentionIntervalInHours": 48
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.SignalRService/SignalR",
+            "apiVersion": "2020-07-01-preview",
+            "name": "[parameters('SignalR_cm_hub_name')]",
+            "location": "[parameters('location')]",
+            "kind": "SignalR",
+            "sku": {
+                "name": "Free_F1",
+                "tier": "Free",
+                "size": "F1",
+                "capacity": 1
+            },
+            "properties": {
+                "tls": {
+                    "clientCertEnabled": false
+                },
+                "features": [
+                    {
+                        "flag": "ServiceMode",
+                        "value": "Serverless",
+                        "properties": {}
+                    },
+                    {
+                        "flag": "EnableConnectivityLogs",
+                        "value": "True",
+                        "properties": {}
+                    },
+                    {
+                        "flag": "EnableMessagingLogs",
+                        "value": "False",
+                        "properties": {}
+                    }
+                ],
+                "cors": {
+                    "allowedOrigins": [
+                        "*"
+                    ]
+                },
+                "upstream": {},
+                "networkACLs": {
+                    "defaultAction": "Deny",
+                    "publicNetwork": {
+                        "allow": [
+                            "ServerConnection",
+                            "ClientConnection",
+                            "RESTAPI"
+                        ]
+                    },
+                    "privateEndpoints": []
+                }
+            }
+        },
+        {
+            "type": "microsoft.insights/components",
+            "apiVersion": "2018-05-01-preview",
+            "name": "[parameters('components_cm_functionsapp_name')]",
+            "location": "[parameters('location')]",
+            "kind": "web",
+            "tags": {
+                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('sites_cm_functionsapp_name'))]": "Resource"
+            },
+            "properties": {
+                "Application_Type": "web"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "name": "[parameters('storageAccounts_cmfuncstorageaccount_name')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2"
+        },
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2020-06-01",
+            "name": "[parameters('serverfarms_cm_functionsapp_asp_name')]",
+            "location": "[parameters('location')]",
+            "kind": "functionapp",
+            "sku": {
+                "name": "Y1",
+                "tier": "Dynamic",
+                "size": "Y1",
+                "family": "Y",
+                "capacity": 0
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2020-06-01",
+            "name": "[parameters('sites_cm_functionsapp_name')]",
+            "location": "[parameters('location')]",
+            "kind": "functionapp",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cmfuncstorageaccount_name'))]",
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_cm_facesdb_name'))]",
+                "[resourceId('Microsoft.SignalRService/SignalR', parameters('SignalR_cm_hub_name'))]",
+                "[resourceId('Microsoft.Insights/components', parameters('components_cm_functionsapp_name'))]",
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_cm_functionsapp_asp_name'))]"
+            ],
+            "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_cm_functionsapp_asp_name'))]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccounts_cmfuncstorageaccount_name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cmfuncstorageaccount_name')), '2019-06-01').keys[0].value)]"
+                        },
+                        {
+                            "name": "AzureCosmosDBFaceCountConnectionString",
+                            "value": "[listConnectionStrings(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_cm_facesdb_name')), '2020-06-01-preview').connectionStrings[0].connectionString]"
+                        },
+                        {
+                            "name": "AzureSignalRConnectionString",
+                            "value": "[listKeys(resourceId('Microsoft.SignalRService/SignalR', parameters('SignalR_cm_hub_name')), '2020-07-01-preview').primaryConnectionString]"
+                        },
+                        {
+                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                            "value": "[reference(resourceId('microsoft.insights/components/', parameters('components_cm_functionsapp_name')), '2018-05-01-preview').InstrumentationKey]"
+                        },
+                        {
+                            "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                            "value": "[concat('InstrumentationKey=', reference(resourceId('microsoft.insights/components/', parameters('components_cm_functionsapp_name')), '2018-05-01-preview').InstrumentationKey)]"
+                        },
+                        {
+                            "name": "FUNCTIONS_WORKER_RUNTIME",
+                            "value": "dotnet"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~3"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccounts_cmfuncstorageaccount_name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cmfuncstorageaccount_name')), '2019-06-01').keys[0].value)]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTSHARE",
+                            "value": "[toLower(parameters('sites_cm_functionsapp_name'))]"
+                        }
+                    ],
+                    "publishingUsername": "[concat('$', parameters('sites_cm_functionsapp_name'))]",
+                    "webSocketsEnabled": true,
+                    "cors": {
+                        "allowedOrigins": [
+                            "https://functions.azure.com",
+                            "https://functions-staging.azure.com",
+                            "https://functions-next.azure.com",
+                            "http://localhost:8080"
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/slots",
+            "apiVersion": "2020-06-01",
+            "name": "[concat(parameters('sites_cm_functionsapp_name'), '/dev')]",
+            "location": "[parameters('location')]",
+            "kind": "functionapp",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cmfuncstorageaccount_name'))]",
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_cm_facesdb_name'))]",
+                "[resourceId('Microsoft.SignalRService/SignalR', parameters('SignalR_cm_hub_name'))]",
+                "[resourceId('Microsoft.Insights/components', parameters('components_cm_functionsapp_name'))]",
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_cm_functionsapp_asp_name'))]",
+                "[resourceId('Microsoft.Web/sites', parameters('sites_cm_functionsapp_name'))]"
+            ],
+            "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_cm_functionsapp_asp_name'))]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccounts_cmfuncstorageaccount_name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cmfuncstorageaccount_name')), '2019-06-01').keys[0].value)]"
+                        },
+                        {
+                            "name": "AzureCosmosDBFaceCountConnectionString",
+                            "value": "[listConnectionStrings(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_cm_facesdb_name')), '2020-06-01-preview').connectionStrings[0].connectionString]"
+                        },
+                        {
+                            "name": "AzureSignalRConnectionString",
+                            "value": "[listKeys(resourceId('Microsoft.SignalRService/SignalR', parameters('SignalR_cm_hub_name')), '2020-07-01-preview').primaryConnectionString]"
+                        },
+                        {
+                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                            "value": "[reference(resourceId('microsoft.insights/components/', parameters('components_cm_functionsapp_name')), '2018-05-01-preview').InstrumentationKey]"
+                        },
+                        {
+                            "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                            "value": "[concat('InstrumentationKey=', reference(resourceId('microsoft.insights/components/', parameters('components_cm_functionsapp_name')), '2018-05-01-preview').InstrumentationKey)]"
+                        },
+                        {
+                            "name": "FUNCTIONS_WORKER_RUNTIME",
+                            "value": "dotnet"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~3"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccounts_cmfuncstorageaccount_name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cmfuncstorageaccount_name')), '2019-06-01').keys[0].value)]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTSHARE",
+                            "value": "[toLower(parameters('sites_cm_functionsapp_name'))]"
+                        }
+                    ]
+                },
+                "publishingUsername": "[concat('$', parameters('sites_cm_functionsapp_name'), '__dev')]",
+                "webSocketsEnabled": true,
+                "cors": {
+                    "allowedOrigins": [
+                        "https://functions.azure.com",
+                        "https://functions-staging.azure.com",
+                        "https://functions-next.azure.com",
+                        "http://localhost:8080"
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "Face_API_Endpoint": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.CognitiveServices/accounts', parameters('accounts_cm_faceapi_name')), '2017-04-18').endpoint]"
+        },
+        "Face_API_Subscription_Key": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', parameters('accounts_cm_faceapi_name')), '2017-04-18').key1]"
+        },
+        "FaceCountDB_Endpoint": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_cm_facesdb_name')), '2020-06-01-preview').documentEndpoint]"
+        },
+        "FaceCountDB_Key": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_cm_facesdb_name')), '2020-06-01-preview').primaryMasterKey]"
+        },
+        "AzureCosmosDBFaceCountConnectionString": {
+            "type": "string",
+            "value": "[listConnectionStrings(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_cm_facesdb_name')), '2020-06-01-preview').connectionStrings[0].connectionString]"
+        },
+        "AzureSignalRConnectionString": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.SignalRService/SignalR', parameters('SignalR_cm_hub_name')), '2020-07-01-preview').primaryConnectionString]"
+        },
+        "AzureWebJobsStorage": {
+            "type": "string",
+            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccounts_cmfuncstorageaccount_name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cmfuncstorageaccount_name')), '2019-06-01').keys[0].value)]"
+        }
+    }
+}

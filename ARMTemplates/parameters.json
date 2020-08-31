@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sites_cm_functionsapp_name": {
+            "value": "cm-functionsapp-test1"
+        },
+        "SignalR_cm_hub_name": {
+            "value": "cm-hub-test1"
+        },
+        "components_cm_functionsapp_name": {
+            "value": "cm-functionsapp-test1"
+        },
+        "accounts_cm_faceapi_name": {
+            "value": "cm-faceapi-test1"
+        },
+        "databaseAccounts_cm_facesdb_name": {
+            "value": "cm-facesdb-test1"
+        },
+        "storageAccounts_cmfuncstorageaccount_name": {
+            "value": "cmfuncstorageaccounttst1"
+        },
+        "serverfarms_cm_functionsapp_asp_name": {
+            "value": "cm-functionsapp-asp-test1"
+        },
+        "location": {
+            "value": "japaneast"
+        }
+    }
+}
