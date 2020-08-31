@@ -51,7 +51,7 @@ steps:
     pwsh: true
     targetType: 'inline'
     script: |
-      Write-Host $(cm-arm-deployment-outputs)
+      Write-Host '$(cm-arm-deployment-outputs)'
       # $var=ConvertFrom-Json '$(cm-arm-deployment-outputs)'
       # Write-Host $var
       # $value=$var.storageAccountName.value
