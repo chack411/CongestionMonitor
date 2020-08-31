@@ -52,7 +52,7 @@ steps:
     targetType: 'inline'
     script: |
       Write-Host '$(cm-arm-deployment-outputs)'
-      # $var=ConvertFrom-Json '$(cm-arm-deployment-outputs)'
-      # Write-Host $var
-      # $value=$var.storageAccountName.value
+      $var=ConvertFrom-Json '$(cm-arm-deployment-outputs)'
+      $value=$var.face_API_Endpoint.value
+      Write-Host '$value'
       # Write-Host "##vso[task.setvariable variable=storageAccount;]$value"
