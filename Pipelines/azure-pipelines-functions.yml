@@ -17,7 +17,7 @@ variables:
   azureSubscription: 'e5539dec-f14a-4c79-912a-8e0f50efc5e6'
 
   # Function app name
-  functionAppName: 'cm-functionsapp'
+  functionAppName: 'cm-functionsapp-test1'
   slotStagingName: 'staging'
   slotDevName: 'dev'
 
@@ -89,7 +89,7 @@ stages:
               appType: functionApp
               appName: $(functionAppName)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
-              AppSettings: -AzureWebJobsStorage $(AzureWebJobsStorage) -AzureCosmosDBFaceCountConnectionString $(AzureCosmosDBFaceCountConnectionString) -AzureSignalRConnectionString $(AzureSignalRConnectionString)
+              # AppSettings: -AzureWebJobsStorage $(AzureWebJobsStorage) -AzureCosmosDBFaceCountConnectionString $(AzureCosmosDBFaceCountConnectionString) -AzureSignalRConnectionString $(AzureSignalRConnectionString)
               # deployToSlotOrASE: true
               # slotName: $(slotStagingName)
 
@@ -113,6 +113,6 @@ stages:
               appType: functionApp
               appName: $(functionAppName)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
-              AppSettings: -AzureWebJobsStorage $(AzureWebJobsStorage) -AzureCosmosDBFaceCountConnectionString $(AzureCosmosDBFaceCountConnectionString) -AzureSignalRConnectionString $(AzureSignalRConnectionString)
+              # AppSettings: -AzureWebJobsStorage $(AzureWebJobsStorage) -AzureCosmosDBFaceCountConnectionString $(AzureCosmosDBFaceCountConnectionString) -AzureSignalRConnectionString $(AzureSignalRConnectionString)
               deployToSlotOrASE: true
               slotName: $(slotDevName)
