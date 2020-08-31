@@ -8,6 +8,7 @@ trigger:
     include:
       - ARMTemplates/template.json
       - ARMTemplates/parameters.json
+      - Pipelines/azure-pipelines-arm.yml
 
 variables:
   # Resouce Group Name
@@ -34,7 +35,12 @@ steps:
     deploymentMode: 'Validation'
     deploymentName: 'cm-arm-deployment'
     deploymentOutputs: 'cm-arm-deployment-outputs'
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- task: PowerShell@2
+  displayName: 'get deployent outputs'
+  inputs:
+    targetType: 'inline'
+    script: |
+      $var=ConvertFrom-Json '$(cm-arm-deployment-outputs)'
+      Write-Host $var
+      # $value=$var.storageAccountName.value
+      # Write-Host "##vso[task.setvariable variable=storageAccount;]$value"
