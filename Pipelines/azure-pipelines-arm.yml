@@ -61,10 +61,3 @@ steps:
       Write-Host "##vso[task.setvariable variable=face_API_Subscription_Key;]$face_key"
       Write-Host "##vso[task.setvariable variable=faceCountDB_Endpoint;]$facedb_url"
       Write-Host "##vso[task.setvariable variable=faceCountDB_Key;]$facedb_key"
-- task: ARM Outputs@6
-  inputs:
-    ConnectedServiceNameSelector: 'ConnectedServiceNameARM'
-    ConnectedServiceNameARM: 'Edtter (bd5c9737-10a5-4178-9b83-fd223f7b4bb4)'
-    resourceGroupName: 'cm-armdeploytest1'
-    outputNames: 'cm-arm-deployment-outputs'
-    whenLastDeploymentIsFailed: 'fail'
