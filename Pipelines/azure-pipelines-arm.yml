@@ -23,7 +23,7 @@ pr:
 variables:
   # Resouce Group Name
   rgName: 'cm-armdeploytest1'
-  locName: 'Japan East'
+  locName: 'japaneast'
 
   # Working Directory
   workingDirectory: '$(System.DefaultWorkingDirectory)/ARMTemplates'
@@ -51,8 +51,13 @@ steps:
     pwsh: true
     targetType: 'inline'
     script: |
-      Write-Host '$(cm-arm-deployment-outputs)'
-      $var=ConvertFrom-Json '$(cm-arm-deployment-outputs)'
-      $value=$var.face_API_Endpoint.value
-      Write-Host $value
-      # Write-Host "##vso[task.setvariable variable=storageAccount;]$value"
+      # Write-Host '$(cm-arm-deployment-outputs)'
+      $out=ConvertFrom-Json '$(cm-arm-deployment-outputs)'
+      $face_url=$out.face_API_Endpoint.value
+      $face_key=$out.face_API_Subscription_Key.value
+      $facedb_url=$out.faceCountDB_Endpoint.value
+      $facedb_key=$out.faceCountDB_Key.value
+      Write-Host "##vso[task.setvariable variable=face_API_Endpoint;]$face_url"
+      Write-Host "##vso[task.setvariable variable=face_API_Subscription_Key;]$face_key"
+      Write-Host "##vso[task.setvariable variable=faceCountDB_Endpoint;]$facedb_url"
+      Write-Host "##vso[task.setvariable variable=faceCountDB_Key;]$facedb_key"
