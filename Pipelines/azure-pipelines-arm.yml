@@ -48,6 +48,7 @@ steps:
 - task: PowerShell@2
   displayName: 'get deployent outputs'
   inputs:
+    pwsh: true
     targetType: 'inline'
     script: |
       Write-Host $(cm-arm-deployment-outputs)
