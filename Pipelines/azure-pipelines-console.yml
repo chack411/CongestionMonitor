@@ -61,5 +61,15 @@ stages:
           $(workingDirectory)/*.csproj
         arguments: --output $(workingDirectory)/publish_output --configuration $(buildConfiguration)
 
+    - task: PowerShell@2
+      displayName: 'create secrets.json'
+      inputs:
+        pwsh: true
+        targetType: 'inline'
+        script: |
+          $out='{"Settings": {"Face_API_Endpoint": "' + $(face_API_Endpoint) + '""}}'
+          New-Item $(workingDirectory)/publish_output/secrets.json
+          Set-Content $(workingDirectory)/publish_output/secrets.json '$out'
+
     - publish: $(workingDirectory)/publish_output
       artifact: drop
