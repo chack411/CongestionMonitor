@@ -6,12 +6,14 @@ on:
       - master
     paths:
       - 'CongestionStaticWebVueApp/*'
+      - '.github/workflows/*'
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
       - master
     paths:
       - 'CongestionStaticWebVueApp/*'
+      - '.github/workflows/*'
 
 jobs:
   build_and_deploy_job:
