@@ -23,7 +23,7 @@
             "type": "String"
         },
         "serverfarms_cm_functionsapp_asp_name": {
-            "defaultValue": "cm-functionsapp-asp",
+            "defaultValue": "[concat(parameters('sites_cm_functionsapp_name'), '-asp')]",
             "type": "String"
         },
         "storageAccounts_cmfuncstorageaccount_name": {

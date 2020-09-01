@@ -3,22 +3,19 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "sites_cm_functionsapp_name": {
-            "value": "cm-functionsapp-test1"
+            "value": "cm-functionsapp-test"
         },
         "SignalR_cm_hub_name": {
-            "value": "cm-hub-test1"
+            "value": "cm-hub-test"
         },
         "accounts_cm_faceapi_name": {
-            "value": "cm-faceapi-test1"
+            "value": "cm-faceapi-test"
         },
         "databaseAccounts_cm_facesdb_name": {
-            "value": "cm-facesdb-test1"
+            "value": "cm-facesdb-test"
         },
         "storageAccounts_cmfuncstorageaccount_name": {
-            "value": "cmfuncstorageaccounttst1"
-        },
-        "serverfarms_cm_functionsapp_asp_name": {
-            "value": "cm-functionsapp-asp-test1"
+            "value": "cmfuncstoragetest"
         }
     }
 }
