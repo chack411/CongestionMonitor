@@ -324,10 +324,6 @@
         }
     ],
     "outputs": {
-        "locationName": {
-            "type": "string",
-            "value": "[parameters('location')]"
-        },
         "functionsappName": {
             "type": "string",
             "value": "[parameters('sites_cm_functionsapp_name')]"

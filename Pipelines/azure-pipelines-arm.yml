@@ -61,7 +61,6 @@ stages:
         pwsh: true
         targetType: 'inline'
         script: |
-          # Write-Host '$(cm-arm-deployment-outputs)'
           $out=ConvertFrom-Json '$(cm-arm-deployment-outputs)'
           $func_name=$out.functionsappName.value
           $face_url=$out.face_API_Endpoint.value
@@ -73,4 +72,7 @@ stages:
           Write-Host "##vso[task.setvariable variable=face_API_Subscription_Key;]$face_key"
           Write-Host "##vso[task.setvariable variable=faceCountDB_Endpoint;]$facedb_url"
           Write-Host "##vso[task.setvariable variable=faceCountDB_Key;]$facedb_key"
+          Write-Host '$(cm-arm-deployment-outputs)'
+          Write-Host '$func_name'
+          Write-Host '$(functionsappName)'
       enabled: true
