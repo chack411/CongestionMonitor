@@ -21,15 +21,17 @@ pr:
       - Pipelines/azure-pipelines-arm.yml
 
 variables:
-  # Resouce Group Name
-  rgName: 'cm-armdeploytest1'
-  locName: 'japaneast'
+- group: cm-resource-param
+- name: vmImageName
+  value: 'windows-latest'
+- name: workingDirectory
+  value: '$(System.DefaultWorkingDirectory)/ARMTemplates'
 
   # Agent VM image name
-  vmImageName: 'windows-latest'
+  # vmImageName: 'windows-latest'
 
   # Working Directory
-  workingDirectory: '$(System.DefaultWorkingDirectory)/ARMTemplates'
+  # workingDirectory: '$(System.DefaultWorkingDirectory)/ARMTemplates'
 
 stages:
 - stage: Deployment
@@ -40,8 +42,6 @@ stages:
     displayName: 'ARM Deployment Job'
     pool:
       vmImage: $(vmImageName)
-    variables:
-    - group: cm-resource-keys
 
     steps:
     - task: AzureResourceManagerTemplateDeployment@3
@@ -51,8 +51,8 @@ stages:
         azureResourceManagerConnection: 'Edtter (bd5c9737-10a5-4178-9b83-fd223f7b4bb4)'
         subscriptionId: 'bd5c9737-10a5-4178-9b83-fd223f7b4bb4'
         action: 'Create Or Update Resource Group'
-        resourceGroupName: $(rgName)
-        location: $(locName)
+        resourceGroupName: $(resourceName)
+        location: $(locationName)
         templateLocation: 'Linked artifact'
         csmFile: '$(workingDirectory)/template.json'
         csmParametersFile: '$(workingDirectory)/parameters.json'
@@ -77,14 +77,3 @@ stages:
           Write-Host "##vso[task.setvariable variable=face_API_Subscription_Key;]$face_key"
           Write-Host "##vso[task.setvariable variable=faceCountDB_Endpoint;]$facedb_url"
           Write-Host "##vso[task.setvariable variable=faceCountDB_Key;]$facedb_key"
-
-    - task: PowerShell@2
-      displayName: 'output variables'
-      inputs:
-        pwsh: true
-        targetType: 'inline'
-        script: |
-          Write-Host '$(face_API_Endpoint)'
-          Write-Host '$(face_API_Subscription_Key)'
-          Write-Host '$(faceCountDB_Endpoint)'
-          Write-Host '$(faceCountDB_Key)'
