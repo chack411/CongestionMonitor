@@ -67,7 +67,7 @@ stages:
         pwsh: true
         targetType: 'inline'
         script: |
-          $out='{"Settings": {"Face_API_Endpoint": "' + $(env.face_API_Endpoint) + '"}}'
+          $out='{"Settings": {"Face_API_Endpoint": "' + $(env:face_API_Endpoint) + '"}}'
           New-Item $(workingDirectory)/publish_output/secrets.json
           Set-Content $(workingDirectory)/publish_output/secrets.json '$out'
 
