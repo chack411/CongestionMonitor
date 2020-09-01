@@ -62,7 +62,6 @@ stages:
         projects: |
           $(workingDirectory)/*.csproj
         arguments: --output $(workingDirectory)/publish_output --configuration $(buildConfiguration)
-      enabled: false
 
     - task: PowerShell@2
       displayName: 'create secrets.json'
