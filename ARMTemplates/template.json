@@ -19,7 +19,7 @@
             "type": "String"
         },
         "components_cm_functionsapp_name": {
-            "defaultValue": "cm-functionsapp",
+            "defaultValue": "[parameters('sites_cm_functionsapp_name')]",
             "type": "String"
         },
         "serverfarms_cm_functionsapp_asp_name": {
