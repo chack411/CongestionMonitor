@@ -74,7 +74,8 @@ stages:
           Write-Host "##vso[task.setvariable variable=face_API_Subscription_Key]$face_key"
           Write-Host "##vso[task.setvariable variable=faceCountDB_Endpoint]$facedb_url"
           Write-Host "##vso[task.setvariable variable=faceCountDB_Key]$facedb_key"
-          Write-Host '$(cm-arm-deployment-outputs)'
+
+          # Write-Host '$(cm-arm-deployment-outputs)'
           Write-Host $out.functionsappName.value
           Write-Host '$(functionsappName)'
           Write-Host $env:FUNC_NAME
@@ -82,7 +83,7 @@ stages:
           Write-Host $(testVal)
           Write-Host '##vso[task.setvariable variable=testVal; isOutput=true]second-value'
           Write-Host $(testVal)
-          Write-Host '##vso[task.setvariable variable=testVal; isOutput=true]FUNC_NAME'
+          Write-Host '##vso[task.setvariable variable=testVal; isOutput=true]$FUNC_NAME'
           Write-Host $(testVal)
       env:
         FUNC_NAME: $(functionsappName)
@@ -95,3 +96,5 @@ stages:
           echo $(testVal)
           echo "##vso[task.setvariable variable=testVal;]secondValue"
           echo $(testVal)
+          echo $(functionsappName)
+          echo $(face_API_Endpoint)
