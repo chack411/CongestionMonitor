@@ -78,7 +78,7 @@ stages:
           # Set-Content $(workingDirectory)/publish_output/secrets.json $out2
           Write-Host $out1
           Write-Host '{"Settings": {"Face_API_Endpoint": "$(env:ENV_FACE_URL)"}}'
-          Write-Host $(env:ENV_FACE_URL)
+          Write-Host $env:ENV_FACE_URL
           Write-Host $out2
           Write-Host '{"Settings": {"Face_API_Endpoint": "$(face_API_Endpoint)"}}'
           Write-Host $(face_API_Endpoint)
