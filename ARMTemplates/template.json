@@ -324,31 +324,39 @@
         }
     ],
     "outputs": {
-        "Face_API_Endpoint": {
+        "locationName": {
+            "type": "string",
+            "value": "[parameters('location')]"
+        },
+        "functionsappName": {
+            "type": "string",
+            "value": "[parameters('sites_cm_functionsapp_name')]"
+        },
+        "face_API_Endpoint": {
             "type": "string",
             "value": "[reference(resourceId('Microsoft.CognitiveServices/accounts', parameters('accounts_cm_faceapi_name')), '2017-04-18').endpoint]"
         },
-        "Face_API_Subscription_Key": {
+        "face_API_Subscription_Key": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', parameters('accounts_cm_faceapi_name')), '2017-04-18').key1]"
         },
-        "FaceCountDB_Endpoint": {
+        "faceCountDB_Endpoint": {
             "type": "string",
             "value": "[reference(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_cm_facesdb_name')), '2020-06-01-preview').documentEndpoint]"
         },
-        "FaceCountDB_Key": {
+        "faceCountDB_Key": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_cm_facesdb_name')), '2020-06-01-preview').primaryMasterKey]"
         },
-        "AzureCosmosDBFaceCountConnectionString": {
+        "azureCosmosDBFaceCountConnectionString": {
             "type": "string",
             "value": "[listConnectionStrings(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_cm_facesdb_name')), '2020-06-01-preview').connectionStrings[0].connectionString]"
         },
-        "AzureSignalRConnectionString": {
+        "azureSignalRConnectionString": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.SignalRService/SignalR', parameters('SignalR_cm_hub_name')), '2020-07-01-preview').primaryConnectionString]"
         },
-        "AzureWebJobsStorage": {
+        "azureWebJobsStorage": {
             "type": "string",
             "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccounts_cmfuncstorageaccount_name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cmfuncstorageaccount_name')), '2019-06-01').keys[0].value)]"
         }
