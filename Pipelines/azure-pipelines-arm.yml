@@ -23,7 +23,7 @@ pr:
 variables:
 - group: cm-resource-param
 - name: vmImageName
-  value: 'windows-latest'
+  value: 'ubuntu-latest'
 - name: workingDirectory
   value: '$(System.DefaultWorkingDirectory)/ARMTemplates'
 - name: testVal
@@ -87,3 +87,11 @@ stages:
       env:
         FUNC_NAME: $(functionsappName)
       enabled: true
+    - task: Bash@3
+      displayName: 'run publish'
+      inputs:
+        targetType: 'inline'
+        script: |
+          echo $(testVal)
+          echo "##vso[task.setvariable variable=testVal;]secondValue"
+          echo $(testVal)
