@@ -59,7 +59,7 @@ stages:
     - task: PowerShell@2
       displayName: 'get deployent outputs'
       inputs:
-        pwsh: true
+        pwsh: false
         targetType: 'inline'
         script: |
           $out=ConvertFrom-Json '$(cm-arm-deployment-outputs)'
@@ -80,7 +80,7 @@ stages:
           Write-Host $env:FUNC_NAME
 
           Write-Host $(testVal)
-          Write-Host "##vso[task.setvariable variable=testVal]second-value"
+          Write-Host '##vso[task.setvariable variable=testVal]second-value'
           Write-Host $(testVal)
       env:
         FUNC_NAME: $(functionsappName)
