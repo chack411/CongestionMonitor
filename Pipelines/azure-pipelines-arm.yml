@@ -27,12 +27,6 @@ variables:
 - name: workingDirectory
   value: '$(System.DefaultWorkingDirectory)/ARMTemplates'
 
-  # Agent VM image name
-  # vmImageName: 'windows-latest'
-
-  # Working Directory
-  # workingDirectory: '$(System.DefaultWorkingDirectory)/ARMTemplates'
-
 stages:
 - stage: Deployment
   displayName: 'Deployment with ARM Template'
@@ -77,3 +71,4 @@ stages:
           Write-Host "##vso[task.setvariable variable=face_API_Subscription_Key;]$face_key"
           Write-Host "##vso[task.setvariable variable=faceCountDB_Endpoint;]$facedb_url"
           Write-Host "##vso[task.setvariable variable=faceCountDB_Key;]$facedb_key"
+      enabled: false
