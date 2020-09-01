@@ -26,8 +26,6 @@ variables:
   value: 'ubuntu-latest'
 - name: workingDirectory
   value: '$(System.DefaultWorkingDirectory)/ARMTemplates'
-- name: testVal
-  value: 'initial-value'
 
 stages:
 - stage: Deployment
@@ -58,11 +56,14 @@ stages:
 
     - task: PowerShell@2
       displayName: 'get deployent outputs'
+      enabled: true
       inputs:
         pwsh: true
         targetType: 'inline'
         script: |
+          # Write-Host '$(cm-arm-deployment-outputs)'
           $out=ConvertFrom-Json '$(cm-arm-deployment-outputs)'
+
           $func_name=$out.functionsappName.value
           $face_url=$out.face_API_Endpoint.value
           $face_key=$out.face_API_Subscription_Key.value
@@ -75,26 +76,15 @@ stages:
           Write-Host "##vso[task.setvariable variable=faceCountDB_Endpoint]$facedb_url"
           Write-Host "##vso[task.setvariable variable=faceCountDB_Key]$facedb_key"
 
-          # Write-Host '$(cm-arm-deployment-outputs)'
-          Write-Host $out.functionsappName.value
-          Write-Host $func_name
-          Write-Host '$(functionsappName)'
-          Write-Host $env:FUNC_NAME
-
-          Write-Host $(testVal)
-          Write-Host '##vso[task.setvariable variable=testVal; isOutput=true]secondValue'
-          # Write-Host $(testVal)
-          # Write-Host '##vso[task.setvariable variable=testVal; isOutput=true]$FUNC_NAME'
-          # Write-Host $(testVal)
-      env:
-        FUNC_NAME: $(functionsappName)
+    - task: PowerShell@2
+      displayName: 'check variables'
       enabled: true
-
-    - task: Bash@3
-      displayName: 'run publish'
       inputs:
+        pwsh: true
         targetType: 'inline'
         script: |
-          echo '$(testVal)'
-          echo '$(functionsappName)'
-          echo '$(face_API_Endpoint)'
+          Write-Host '$(functionsappName)'
+          Write-Host '$(face_API_Endpoint)'
+          Write-Host '$(face_API_Subscription_Key)'
+          Write-Host '$(faceCountDB_Endpoint)'
+          Write-Host '$(faceCountDB_Key)'
