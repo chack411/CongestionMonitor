@@ -59,17 +59,17 @@ stages:
     - task: PowerShell@2
       displayName: 'get deployent outputs'
       inputs:
-        pwsh: false
+        pwsh: true
         targetType: 'inline'
         script: |
           $out=ConvertFrom-Json '$(cm-arm-deployment-outputs)'
-          # $func_name=$out.functionsappName.value
+          $func_name=$out.functionsappName.value
           $face_url=$out.face_API_Endpoint.value
           $face_key=$out.face_API_Subscription_Key.value
           $facedb_url=$out.faceCountDB_Endpoint.value
           $facedb_key=$out.faceCountDB_Key.value
 
-          Write-Host "##vso[task.setvariable variable=functionsappName]$out.functionsappName.value"
+          Write-Host "##vso[task.setvariable variable=functionsappName]$func_name"
           Write-Host "##vso[task.setvariable variable=face_API_Endpoint]$face_url"
           Write-Host "##vso[task.setvariable variable=face_API_Subscription_Key]$face_key"
           Write-Host "##vso[task.setvariable variable=faceCountDB_Endpoint]$facedb_url"
@@ -77,24 +77,24 @@ stages:
 
           # Write-Host '$(cm-arm-deployment-outputs)'
           Write-Host $out.functionsappName.value
+          Write-Host $func_name
           Write-Host '$(functionsappName)'
           Write-Host $env:FUNC_NAME
 
           Write-Host $(testVal)
           Write-Host '##vso[task.setvariable variable=testVal; isOutput=true]secondValue'
-          Write-Host $(testVal)
+          # Write-Host $(testVal)
           # Write-Host '##vso[task.setvariable variable=testVal; isOutput=true]$FUNC_NAME'
           # Write-Host $(testVal)
       env:
         FUNC_NAME: $(functionsappName)
       enabled: true
+
     - task: Bash@3
       displayName: 'run publish'
       inputs:
         targetType: 'inline'
         script: |
-          echo '$(testVal)'
-          echo '##vso[task.setvariable variable=testVal;]secondValue'
           echo '$(testVal)'
           echo '$(functionsappName)'
           echo '$(face_API_Endpoint)'
