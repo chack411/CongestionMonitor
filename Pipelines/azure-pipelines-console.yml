@@ -62,6 +62,7 @@ stages:
         projects: |
           $(workingDirectory)/*.csproj
         arguments: --output $(workingDirectory)/publish_output --configuration $(buildConfiguration)
+      enabled: false
 
     - task: PowerShell@2
       displayName: 'create secrets.json'
@@ -69,13 +70,18 @@ stages:
         pwsh: true
         targetType: 'inline'
         script: |
-          $out='{"Settings": {"Face_API_Endpoint": "$(env:ENV_FACE_URL)"}}'
-          $out2='{"Settings": {"Face_API_Endpoint": "' + $(face_API_Endpoint) + '"}}'
-          New-Item $(workingDirectory)/publish_output/secrets.json
-          Set-Content $(workingDirectory)/publish_output/secrets.json $out2
-          Write-Host $out
+          $out1='{"Settings": {"Face_API_Endpoint": "$(env:ENV_FACE_URL)"}}'
+          $out2='{"Settings": {"Face_API_Endpoint": "$(face_API_Endpoint)"}}'
+          $out3='{"Settings": {"Face_API_Endpoint": "$env:ENV_FACE_URL"}}'
+          # $out2='{"Settings": {"Face_API_Endpoint": "' + $(face_API_Endpoint) + '"}}'
+          # New-Item $(workingDirectory)/publish_output/secrets.json
+          # Set-Content $(workingDirectory)/publish_output/secrets.json $out2
+          Write-Host $out1
           Write-Host '{"Settings": {"Face_API_Endpoint": "$(env:ENV_FACE_URL)"}}'
           Write-Host $out2
+          Write-Host '{"Settings": {"Face_API_Endpoint": "$(face_API_Endpoint)"}}'
+          Write-Host $out3
+          Write-Host '{"Settings": {"Face_API_Endpoint": "$env:ENV_FACE_URL"}}'
       env:
         ENV_FACE_URL: $(face_API_Endpoint)
         ENV_FACE_KEY: $(face_API_Subscription_Key)
