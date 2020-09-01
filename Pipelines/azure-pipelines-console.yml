@@ -70,17 +70,20 @@ stages:
         pwsh: true
         targetType: 'inline'
         script: |
-          $out1='{"Settings": {"Face_API_Endpoint": "' + $env:ENV_FACE_URL + '"}}'
-          $out2='{"Settings": {"Face_API_Endpoint": "' + $(face_API_Endpoint) + '"}}'
+          $out1='{"Settings": {"Face_API_Endpoint": "' + $env:ENV_LOCNAME + '"}}'
+          $out2='{"Settings": {"Face_API_Endpoint": "' + $(locationName) + '"}}'
           # New-Item $(workingDirectory)/publish_output/secrets.json
           # Set-Content $(workingDirectory)/publish_output/secrets.json $out2
           Write-Host $out1
+          Write-Host $env:ENV_LOCNAME
           Write-Host $out2
+          Write-Host $locationName
       env:
         ENV_FACE_URL: $(face_API_Endpoint)
         ENV_FACE_KEY: $(face_API_Subscription_Key)
         ENV_FACEDB_URL: $(faceCountDB_Endpoint)
         ENV_FACEDB_KEY: $(faceCountDB_Key)
+        ENV_LOCNAME: $(locationName)
 
     - publish: $(workingDirectory)/publish_output
       artifact: drop
