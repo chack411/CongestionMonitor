@@ -82,7 +82,7 @@ stages:
           Write-Host $(testVal)
           Write-Host '##vso[task.setvariable variable=testVal; isOutput=true]second-value'
           Write-Host $(testVal)
-          Write-Host '##vso[task.setvariable variable=testVal; isOutput=true]$env:FUNC_NAME'
+          Write-Host '##vso[task.setvariable variable=testVal; isOutput=true]FUNC_NAME'
           Write-Host $(testVal)
       env:
         FUNC_NAME: $(functionsappName)
