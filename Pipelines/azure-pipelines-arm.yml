@@ -81,10 +81,10 @@ stages:
           Write-Host $env:FUNC_NAME
 
           Write-Host $(testVal)
-          Write-Host '##vso[task.setvariable variable=testVal; isOutput=true]second-value'
+          Write-Host '##vso[task.setvariable variable=testVal; isOutput=true]secondValue'
           Write-Host $(testVal)
-          Write-Host '##vso[task.setvariable variable=testVal; isOutput=true]$FUNC_NAME'
-          Write-Host $(testVal)
+          # Write-Host '##vso[task.setvariable variable=testVal; isOutput=true]$FUNC_NAME'
+          # Write-Host $(testVal)
       env:
         FUNC_NAME: $(functionsappName)
       enabled: true
@@ -93,8 +93,8 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          echo $(testVal)
-          echo "##vso[task.setvariable variable=testVal;]secondValue"
-          echo $(testVal)
-          echo $(functionsappName)
-          echo $(face_API_Endpoint)
+          echo '$(testVal)'
+          echo '##vso[task.setvariable variable=testVal;]secondValue'
+          echo '$(testVal)''
+          echo '$(functionsappName)'
+          echo '$(face_API_Endpoint)'
