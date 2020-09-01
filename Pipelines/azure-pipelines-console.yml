@@ -78,6 +78,9 @@ stages:
           Write-Host $env:ENV_LOCNAME
           Write-Host $out2
           Write-Host $(locationName)
+          $out3='{"Settings": {"Face_API_Endpoint": "$(locationName)"}}'
+          $out4='{"Settings": {"Face_API_Endpoint": "$env:ENV_LOCNAME"}}'
+          Write-Host $out3
       env:
         ENV_FACE_URL: $(face_API_Endpoint)
         ENV_FACE_KEY: $(face_API_Subscription_Key)
