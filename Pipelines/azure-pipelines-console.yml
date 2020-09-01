@@ -70,7 +70,7 @@ stages:
         targetType: 'inline'
         script: |
           $out='{"Settings": {"Face_API_Endpoint": "$(env:ENV_FACE_URL)"}}'
-          $out2='{"Settings": {"Face_API_Endpoint": "' + $(env:ENV_FACE_URL) + '"}}'
+          $out2='{"Settings": {"Face_API_Endpoint": "' + $(face_API_Endpoint) + '"}}'
           New-Item $(workingDirectory)/publish_output/secrets.json
           Set-Content $(workingDirectory)/publish_output/secrets.json $out2
           Write-Host $out
