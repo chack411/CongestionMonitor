@@ -77,7 +77,7 @@ stages:
           Write-Host $out1
           Write-Host $env:ENV_LOCNAME
           Write-Host $out2
-          Write-Host $locationName
+          Write-Host $(locationName)
       env:
         ENV_FACE_URL: $(face_API_Endpoint)
         ENV_FACE_KEY: $(face_API_Subscription_Key)
