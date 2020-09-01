@@ -25,8 +25,7 @@ variables:
   # Azure Resource Manager connection created during pipeline creation
   azureSubscription: 'e5539dec-f14a-4c79-912a-8e0f50efc5e6'
 
-  # Function app name
-  functionAppName: 'cm-functionsapp-test1'
+  # Function app slot settings
   slotStagingName: 'staging'
   slotDevName: 'dev'
 
@@ -84,6 +83,8 @@ stages:
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   jobs:
   - deployment: Deploy_Staging
+    variables:
+    - group: cm-resource-param
     pool:
       vmImage: $(vmImageName)
     environment: 'development'
@@ -96,9 +97,8 @@ stages:
             inputs:
               azureSubscription: '$(azureSubscription)'
               appType: functionApp
-              appName: $(functionAppName)
+              appName: $(functionsappName)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
-              # AppSettings: -AzureWebJobsStorage $(AzureWebJobsStorage) -AzureCosmosDBFaceCountConnectionString $(AzureCosmosDBFaceCountConnectionString) -AzureSignalRConnectionString $(AzureSignalRConnectionString)
               # deployToSlotOrASE: true
               # slotName: $(slotStagingName)
 
@@ -108,6 +108,8 @@ stages:
   condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
   jobs:
   - deployment: Deploy_PR
+    variables:
+    - group: cm-resource-param
     pool:
       vmImage: $(vmImageName)
     environment: 'development-pr'
@@ -120,8 +122,7 @@ stages:
             inputs:
               azureSubscription: '$(azureSubscription)'
               appType: functionApp
-              appName: $(functionAppName)
+              appName: $(functionsappName)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
-              # AppSettings: -AzureWebJobsStorage $(AzureWebJobsStorage) -AzureCosmosDBFaceCountConnectionString $(AzureCosmosDBFaceCountConnectionString) -AzureSignalRConnectionString $(AzureSignalRConnectionString)
               deployToSlotOrASE: true
               slotName: $(slotDevName)
