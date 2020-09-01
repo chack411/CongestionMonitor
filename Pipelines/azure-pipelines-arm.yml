@@ -1,0 +1,74 @@
+# ARM Deployment for Congestion Monitor resources
+
+trigger:
+  branches:
+   include:
+     - master
+  paths:
+    include:
+      - ARMTemplates/template.json
+      - ARMTemplates/parameters.json
+      - Pipelines/azure-pipelines-arm.yml
+
+pr:
+  branches:
+   include:
+     - master
+  paths:
+    include:
+      - ARMTemplates/template.json
+      - ARMTemplates/parameters.json
+      - Pipelines/azure-pipelines-arm.yml
+
+variables:
+- group: cm-resource-param
+- name: vmImageName
+  value: 'windows-latest'
+- name: workingDirectory
+  value: '$(System.DefaultWorkingDirectory)/ARMTemplates'
+
+stages:
+- stage: Deployment
+  displayName: 'Deployment with ARM Template'
+
+  jobs:
+  - job: Deploy
+    displayName: 'ARM Deployment Job'
+    pool:
+      vmImage: $(vmImageName)
+
+    steps:
+    - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'Run ARM Deployment'
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: 'Edtter (bd5c9737-10a5-4178-9b83-fd223f7b4bb4)'
+        subscriptionId: 'bd5c9737-10a5-4178-9b83-fd223f7b4bb4'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: $(resourceName)
+        location: $(locationName)
+        templateLocation: 'Linked artifact'
+        csmFile: '$(workingDirectory)/template.json'
+        csmParametersFile: '$(workingDirectory)/parameters.json'
+        overrideParameters: -sites_cm_functionsapp_name cm-functionsapp-test1 -components_cm_functionsapp_name cm-functionsapp-test1 -SignalR_cm_hub_name cm-hub-test1 -accounts_cm_faceapi_name cm-faceapi-test1 -databaseAccounts_cm_facesdb_name cm-facesdb-test1 -storageAccounts_cmfuncstorageaccount_name cmfuncstorageaccounttst1 -serverfarms_cm_functionsapp_asp_name cm-functionsapp-asp-test1
+        deploymentMode: 'Incremental'
+        deploymentName: 'cm-arm-deployment'
+        deploymentOutputs: 'cm-arm-deployment-outputs'
+
+    - task: PowerShell@2
+      displayName: 'get deployent outputs'
+      inputs:
+        pwsh: true
+        targetType: 'inline'
+        script: |
+          # Write-Host '$(cm-arm-deployment-outputs)'
+          $out=ConvertFrom-Json '$(cm-arm-deployment-outputs)'
+          $face_url=$out.face_API_Endpoint.value
+          $face_key=$out.face_API_Subscription_Key.value
+          $facedb_url=$out.faceCountDB_Endpoint.value
+          $facedb_key=$out.faceCountDB_Key.value
+          Write-Host "##vso[task.setvariable variable=face_API_Endpoint;]$face_url"
+          Write-Host "##vso[task.setvariable variable=face_API_Subscription_Key;]$face_key"
+          Write-Host "##vso[task.setvariable variable=faceCountDB_Endpoint;]$facedb_url"
+          Write-Host "##vso[task.setvariable variable=faceCountDB_Key;]$facedb_key"
+      enabled: false
