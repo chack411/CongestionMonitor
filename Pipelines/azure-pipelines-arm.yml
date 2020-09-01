@@ -40,6 +40,8 @@ stages:
     displayName: 'ARM Deployment Job'
     pool:
       vmImage: $(vmImageName)
+    variables:
+    - group: cm-resource-keys
 
     steps:
     - task: AzureResourceManagerTemplateDeployment@3
