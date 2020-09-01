@@ -67,7 +67,7 @@ stages:
           $facedb_url=$out.faceCountDB_Endpoint.value
           $facedb_key=$out.faceCountDB_Key.value
 
-          Write-Host "##vso[task.setvariable variable=func_name;]$out.functionsappName.value"
+          Write-Host "##vso[task.setvariable variable=FUNC_NAME;]$out.functionsappName.value"
           Write-Host "##vso[task.setvariable variable=face_API_Endpoint;]$face_url"
           Write-Host "##vso[task.setvariable variable=face_API_Subscription_Key;]$face_key"
           Write-Host "##vso[task.setvariable variable=faceCountDB_Endpoint;]$facedb_url"
@@ -75,5 +75,7 @@ stages:
           Write-Host '$(cm-arm-deployment-outputs)'
           Write-Host '$func_name'
           Write-Host '$(functionsappName)'
-          Write-Host $env:func_name
+          Write-Host $env:FUNC_NAME
+      env:
+        FUNC_NAME: $(functionsappName)
       enabled: true
