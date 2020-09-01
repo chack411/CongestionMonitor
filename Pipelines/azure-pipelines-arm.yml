@@ -95,6 +95,6 @@ stages:
         script: |
           echo '$(testVal)'
           echo '##vso[task.setvariable variable=testVal;]secondValue'
-          echo '$(testVal)''
+          echo '$(testVal)'
           echo '$(functionsappName)'
           echo '$(face_API_Endpoint)'
