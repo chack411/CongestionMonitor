@@ -4,10 +4,14 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'CongestionStaticWebVueApp/*'
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
       - master
+    paths:
+      - 'CongestionStaticWebVueApp/*'
 
 jobs:
   build_and_deploy_job:
