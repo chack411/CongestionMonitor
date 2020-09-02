@@ -101,8 +101,10 @@ stages:
     buildConfiguration: 'Release'
 
   jobs:
-  - job: Build
+  - job: BuildFunc
     displayName: 'Build Function App'
+    variables:
+      funcName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsappName'] ]
     pool:
       vmImage: $(vmImageName)  
     steps:
@@ -133,6 +135,18 @@ stages:
     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
       artifact: drop
 
+    - task: PowerShell@2
+      displayName: 'Get funcName at Build'
+      name: OutputValueBuild
+      inputs:
+        pwsh: true
+        targetType: 'inline'
+        script: |
+          $func_name='$(funcName)'
+          Write-Host '$(funcName)'
+          Write-Host '$(func_name)'
+          Write-Host "##vso[task.setvariable variable=funcName2;isOutput=true]$func_name"
+
 - stage: Deploy_Staging
   displayName: 'Deploy Staging'
   dependsOn: Build
@@ -141,7 +155,7 @@ stages:
   jobs:
   - deployment: Deploy_Staging
     variables:
-      funcName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsappName'] ]
+      funcName: $[ stageDependencies.Build.BuildFunc.outputs['OutputValueBuild.funcName2'] ]
       slotStagingName: 'staging'
     pool:
       vmImage: $(vmImageName)
@@ -174,7 +188,7 @@ stages:
   jobs:
   - deployment: Deploy_PR
     variables:
-      funcName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsappName'] ]
+      funcName: $[ stageDependencies.Build.BuildFunc.outputs['OutputValueBuild.funcName2'] ]
       slotDevName: 'dev'
     pool:
       vmImage: $(vmImageName)
