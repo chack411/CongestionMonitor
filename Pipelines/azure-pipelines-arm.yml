@@ -60,29 +60,25 @@ stages:
       enabled: true
       inputs:
         pwsh: true
-        targetType: 'inline'
-        script: |
-          # Write-Host '$(cm-arm-deployment-outputs)'
+        targetType: 'inline'        script: |
           $out=ConvertFrom-Json '$(cm-arm-deployment-outputs)'
-
-          $staticweb_rul=$out.staticweb_Url.value
+          $static_rul=$out.staticweb_Url.value
           $func_name=$out.functionsappName.value
           $func_rul=$out.functionsapp_Url.value
-          $face_url=$out.face_API_Endpoint.value
-          $face_key=$out.face_API_Subscription_Key.value
-          $facedb_url=$out.faceCountDB_Endpoint.value
-          $facedb_key=$out.faceCountDB_Key.value
 
-          Write-Host "##vso[task.setvariable variable=staticweb_Url]$staticweb_url"
+          Write-Host "##vso[task.setvariable variable=staticweb_Url]$static_rul"
           Write-Host "##vso[task.setvariable variable=functionsappName]$func_name"
           Write-Host "##vso[task.setvariable variable=functionsapp_Url]$func_rul"
-          Write-Host "##vso[task.setvariable variable=face_API_Endpoint]$face_url"
-          Write-Host "##vso[task.setvariable variable=face_API_Subscription_Key]$face_key"
-          Write-Host "##vso[task.setvariable variable=faceCountDB_Endpoint]$facedb_url"
-          Write-Host "##vso[task.setvariable variable=faceCountDB_Key]$facedb_key"
 
-          Write-Host $staticweb_rul
-          Write-Host $func_rul
+          # Write-Host '$(cm-arm-deployment-outputs)'
+          # $face_url=$out.face_API_Endpoint.value
+          # $face_key=$out.face_API_Subscription_Key.value
+          # $facedb_url=$out.faceCountDB_Endpoint.value
+          # $facedb_key=$out.faceCountDB_Key.value
+          # Write-Host "##vso[task.setvariable variable=face_API_Endpoint]$face_url"
+          # Write-Host "##vso[task.setvariable variable=face_API_Subscription_Key]$face_key"
+          # Write-Host "##vso[task.setvariable variable=faceCountDB_Endpoint]$facedb_url"
+          # Write-Host "##vso[task.setvariable variable=faceCountDB_Key]$facedb_key"
 
     - task: PowerShell@2
       displayName: 'check variables'
@@ -94,7 +90,3 @@ stages:
           Write-Host '$(staticweb_Url)'
           Write-Host '$(functionsappName)'
           Write-Host '$(functionsapp_Url)'
-          Write-Host '$(face_API_Endpoint)'
-          Write-Host '$(face_API_Subscription_Key)'
-          Write-Host '$(faceCountDB_Endpoint)'
-          Write-Host '$(faceCountDB_Key)'
