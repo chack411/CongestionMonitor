@@ -152,7 +152,6 @@ stages:
       runOnce:
         deploy:
           steps:
-          - PowerShell: Write-Host '$(funcName)'
           - task: PowerShell@2
             displayName: 'Get deployent outputs'
             inputs:
@@ -160,7 +159,6 @@ stages:
               targetType: 'inline'
               script: |
                 Write-Host '$(funcName)'
-                
           - task: AzureFunctionApp@1
             displayName: 'Azure functions app deploy'
             inputs:
@@ -185,6 +183,13 @@ stages:
       runOnce:
         deploy:
           steps:
+          - task: PowerShell@2
+            displayName: 'Get deployent outputs'
+            inputs:
+              pwsh: true
+              targetType: 'inline'
+              script: |
+                Write-Host '$(funcName)'
           - task: AzureFunctionApp@1
             displayName: 'Azure functions app deploy'
             inputs:
