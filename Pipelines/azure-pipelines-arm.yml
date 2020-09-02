@@ -50,6 +50,7 @@ stages:
         templateLocation: 'Linked artifact'
         csmFile: '$(workingDirectory)/template.json'
         csmParametersFile: '$(workingDirectory)/parameters.json'
+        overrideParameters: -sites_cm_repositoryToken $(repositoryToken)
         deploymentMode: 'Incremental'
         deploymentName: 'cm-arm-deployment'
         deploymentOutputs: 'cm-arm-deployment-outputs'
@@ -64,13 +65,17 @@ stages:
           # Write-Host '$(cm-arm-deployment-outputs)'
           $out=ConvertFrom-Json '$(cm-arm-deployment-outputs)'
 
+          $staticweb_rul=$out.staticweb_Url.value
           $func_name=$out.functionsappName.value
+          $func_rul=$out.functionsapp_Url.value
           $face_url=$out.face_API_Endpoint.value
           $face_key=$out.face_API_Subscription_Key.value
           $facedb_url=$out.faceCountDB_Endpoint.value
           $facedb_key=$out.faceCountDB_Key.value
 
+          Write-Host "##vso[task.setvariable variable=staticweb_Url]$staticweb_url"
           Write-Host "##vso[task.setvariable variable=functionsappName]$func_name"
+          Write-Host "##vso[task.setvariable variable=functionsapp_Url]$func_rul"
           Write-Host "##vso[task.setvariable variable=face_API_Endpoint]$face_url"
           Write-Host "##vso[task.setvariable variable=face_API_Subscription_Key]$face_key"
           Write-Host "##vso[task.setvariable variable=faceCountDB_Endpoint]$facedb_url"
@@ -83,7 +88,9 @@ stages:
         pwsh: true
         targetType: 'inline'
         script: |
+          Write-Host '$(staticweb_Url)'
           Write-Host '$(functionsappName)'
+          Write-Host '$(functionsapp_Url)'
           Write-Host '$(face_API_Endpoint)'
           Write-Host '$(face_API_Subscription_Key)'
           Write-Host '$(faceCountDB_Endpoint)'

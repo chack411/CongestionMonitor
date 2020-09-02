@@ -16,6 +16,18 @@
         },
         "storageAccounts_cmfuncstorageaccount_name": {
             "value": "cmfuncstoragetest"
+        },
+        "sites_cm_staticweb_name": {
+            "value": "cm-staticweb-test"
+        },
+        "sites_cm_repositoryUrl": {
+            "value": "https://github.com/chack411/CongestionMonitor"
+        },
+        "sites_cm_repositoryToken": {
+            "value": ""
+        },
+        "sites_cm_appLocation": {
+            "value": "CongestionStaticWebVueApp"
         }
     }
 }

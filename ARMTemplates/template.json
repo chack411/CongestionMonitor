@@ -33,6 +33,38 @@
         "location": {
             "defaultValue": "[resourceGroup().location]",
             "type": "string"
+        },
+        "sites_cm_staticweb_location": {
+            "defaultValue": "eastasia",
+            "type": "String"
+        },
+        "sites_cm_staticweb_name": {
+            "defaultValue": "cm-staticweb",
+            "type": "String"
+        },
+        "sites_cm_repositoryUrl": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "sites_cm_branch": {
+            "defaultValue": "master",
+            "type": "String"
+        },
+        "sites_cm_repositoryToken": {
+            "defaultValue": "",
+            "type": "SecureString"
+        },
+        "sites_cm_appLocation": {
+            "defaultValue": "/",
+            "type": "String"
+        },
+        "sites_cm_apiLocation": {
+            "defaultValue": "api",
+            "type": "String"
+        },
+        "sites_cm_appArtifactLocation": {
+            "defaultValue": "dist",
+            "type": "String"
         }
     },
     "variables": {},
@@ -198,7 +230,8 @@
                 "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccounts_cm_facesdb_name'))]",
                 "[resourceId('Microsoft.SignalRService/SignalR', parameters('SignalR_cm_hub_name'))]",
                 "[resourceId('Microsoft.Insights/components', parameters('components_cm_functionsapp_name'))]",
-                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_cm_functionsapp_asp_name'))]"
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_cm_functionsapp_asp_name'))]",
+                "[resourceId('Microsoft.Web/staticSites', parameters('sites_cm_staticweb_name'))]"
             ],
             "properties": {
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_cm_functionsapp_asp_name'))]",
@@ -248,7 +281,8 @@
                             "https://functions.azure.com",
                             "https://functions-staging.azure.com",
                             "https://functions-next.azure.com",
-                            "http://localhost:8080"
+                            "http://localhost:8080",
+                            "[concat('https://', reference(resourceId('Microsoft.Web/staticSites', parameters('sites_cm_staticweb_name')), '2020-06-01').defaultHostname)]"
                         ]
                     }
                 }
@@ -266,7 +300,8 @@
                 "[resourceId('Microsoft.SignalRService/SignalR', parameters('SignalR_cm_hub_name'))]",
                 "[resourceId('Microsoft.Insights/components', parameters('components_cm_functionsapp_name'))]",
                 "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_cm_functionsapp_asp_name'))]",
-                "[resourceId('Microsoft.Web/sites', parameters('sites_cm_functionsapp_name'))]"
+                "[resourceId('Microsoft.Web/sites', parameters('sites_cm_functionsapp_name'))]",
+                "[resourceId('Microsoft.Web/staticSites', parameters('sites_cm_staticweb_name'))]"
             ],
             "properties": {
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_cm_functionsapp_asp_name'))]",
@@ -308,25 +343,61 @@
                             "name": "WEBSITE_CONTENTSHARE",
                             "value": "[toLower(parameters('sites_cm_functionsapp_name'))]"
                         }
-                    ]
+                    ],
+                    "publishingUsername": "[concat('$', parameters('sites_cm_functionsapp_name'), '__dev')]",
+                    "webSocketsEnabled": true,
+                    "cors": {
+                        "allowedOrigins": [
+                            "https://functions.azure.com",
+                            "https://functions-staging.azure.com",
+                            "https://functions-next.azure.com",
+                            "http://localhost:8080",
+                            "[concat('https://', reference(resourceId('Microsoft.Web/staticSites', parameters('sites_cm_staticweb_name')), '2020-06-01').defaultHostname)]"
+                        ]
+                    }
                 },
-                "publishingUsername": "[concat('$', parameters('sites_cm_functionsapp_name'), '__dev')]",
-                "webSocketsEnabled": true,
-                "cors": {
-                    "allowedOrigins": [
-                        "https://functions.azure.com",
-                        "https://functions-staging.azure.com",
-                        "https://functions-next.azure.com",
-                        "http://localhost:8080"
+            }
+        },
+        {
+            "type": "Microsoft.Web/staticSites",
+            "apiVersion": "2020-06-01",
+            "name": "[parameters('sites_cm_staticweb_name')]",
+            "location": "[parameters('sites_cm_staticweb_location')]",
+            "tags": {},
+            "dependsOn": [
+            ],
+            "sku": {
+                "tier": "Free",
+                "name": "Free"
+            },
+            "properties": {
+                "repositoryUrl": "[parameters('sites_cm_repositoryUrl')]",
+                "branch": "[parameters('sites_cm_branch')]",
+                "repositoryToken": "[parameters('sites_cm_repositoryToken')]",
+                "buildProperties": {
+                    "appLocation": "[parameters('sites_cm_appLocation')]",
+                    "apiLocation": "[parameters('sites_cm_apiLocation')]",
+                    "appArtifactLocation": "[parameters('sites_cm_appArtifactLocation')]"
+                },
+                "siteConfig": {
+                    "appSettings": [
                     ]
                 }
             }
         }
     ],
     "outputs": {
+        "staticweb_Url": {
+            "type": "string",
+            "value": "[concat('https://', reference(resourceId('Microsoft.Web/staticSites', parameters('sites_cm_staticweb_name')), '2020-06-01').defaultHostname)]"
+        },
         "functionsappName": {
             "type": "string",
             "value": "[parameters('sites_cm_functionsapp_name')]"
+        },
+        "functionsapp_Url": {
+            "type": "object",
+            "value": "[reference(resourceId('Microsoft.Web/sites', parameters('sites_cm_functionsapp_name')), '2020-06-01')]"
         },
         "face_API_Endpoint": {
             "type": "string",
