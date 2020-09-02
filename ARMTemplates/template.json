@@ -355,7 +355,7 @@
                             "[concat('https://', reference(resourceId('Microsoft.Web/staticSites', parameters('sites_cm_staticweb_name')), '2020-06-01').defaultHostname)]"
                         ]
                     }
-                },
+                }
             }
         },
         {
