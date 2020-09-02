@@ -16,6 +16,10 @@ ARM Deployment:
 
 [![Build Status](https://dev.azure.com/akirain/Congestion%20Monitor/_apis/build/status/chack411.CongestionMonitorARM?branchName=master)](https://dev.azure.com/akirain/Congestion%20Monitor/_build/latest?definitionId=73&branchName=master)
 
+Static Vue App:
+
+![Static Web for Congestion Status - CI/CD](https://github.com/chack411/CongestionMonitor/workflows/Static%20Web%20for%20Congestion%20Status%20-%20CI/CD/badge.svg)
+
 ## Azure deployment
 [![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https://github.com/chack411/CongestionMonitor/blob/master/ARMTemplates/template.json)
 
