@@ -396,8 +396,8 @@
             "value": "[parameters('sites_cm_functionsapp_name')]"
         },
         "functionsapp_Url": {
-            "type": "object",
-            "value": "[reference(resourceId('Microsoft.Web/sites', parameters('sites_cm_functionsapp_name')), '2020-06-01')]"
+            "type": "string",
+            "value": "[concat('https://', parameters('sites_cm_functionsapp_name'), '.azurewebsites.net')]"
         },
         "face_API_Endpoint": {
             "type": "string",

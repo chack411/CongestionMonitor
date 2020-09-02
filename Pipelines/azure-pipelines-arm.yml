@@ -81,6 +81,9 @@ stages:
           Write-Host "##vso[task.setvariable variable=faceCountDB_Endpoint]$facedb_url"
           Write-Host "##vso[task.setvariable variable=faceCountDB_Key]$facedb_key"
 
+          Write-Host $staticweb_rul
+          Write-Host $func_rul
+
     - task: PowerShell@2
       displayName: 'check variables'
       enabled: true
