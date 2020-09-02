@@ -60,7 +60,8 @@ stages:
       enabled: true
       inputs:
         pwsh: true
-        targetType: 'inline'        script: |
+        targetType: 'inline'
+        script: |
           $out=ConvertFrom-Json '$(cm-arm-deployment-outputs)'
           $static_rul=$out.staticweb_Url.value
           $func_name=$out.functionsappName.value
