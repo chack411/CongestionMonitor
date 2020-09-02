@@ -59,7 +59,7 @@
             "type": "String"
         },
         "sites_cm_apiLocation": {
-            "defaultValue": "api",
+            "defaultValue": "[concat(parameters('sites_cm_appLocation'), '/api')]",
             "type": "String"
         },
         "sites_cm_appArtifactLocation": {
