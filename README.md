@@ -12,10 +12,6 @@ Camera Console App:
 
 [![Build Status](https://dev.azure.com/akirain/Congestion%20Monitor/_apis/build/status/chack411.CongestionCameraConsoleApp?branchName=master)](https://dev.azure.com/akirain/Congestion%20Monitor/_build/latest?definitionId=72&branchName=master)
 
-ARM Deployment:
-
-[![Build Status](https://dev.azure.com/akirain/Congestion%20Monitor/_apis/build/status/chack411.CongestionMonitorARM?branchName=master)](https://dev.azure.com/akirain/Congestion%20Monitor/_build/latest?definitionId=73&branchName=master)
-
 Static Vue App:
 
 ![Static Web for Congestion Status - CI/CD](https://github.com/chack411/CongestionMonitor/workflows/Static%20Web%20for%20Congestion%20Status%20-%20CI/CD/badge.svg)
