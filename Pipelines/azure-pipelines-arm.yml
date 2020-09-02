@@ -99,5 +99,7 @@ stages:
         scriptType: 'pscore'
         scriptLocation: 'inlineScript'
         inlineScript: |
+          Write-Host '$(functionsapp_Url)'
           az --version
           az account show -o table
+          az staticwebapp -h
