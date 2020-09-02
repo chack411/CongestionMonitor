@@ -63,7 +63,7 @@ stages:
         deploymentOutputs: 'cm-arm-deployment-outputs'
 
     - task: PowerShell@2
-      name: Outputs
+      name: OutputValues
       displayName: 'Get deployent outputs'
       enabled: true
       inputs:
@@ -139,7 +139,7 @@ stages:
   dependsOn: Build
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   variables:
-    functionsappName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['Outputs.functionsappName'] ]
+    funcName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsappName'] ]
     slotStagingName: 'staging'
   jobs:
   - deployment: Deploy_Staging
@@ -152,12 +152,21 @@ stages:
       runOnce:
         deploy:
           steps:
+
+          - task: PowerShell@2
+            displayName: 'Get deployent outputs'
+            inputs:
+              pwsh: true
+              targetType: 'inline'
+              script: |
+                Write-Host '$(funcName)'
+                
           - task: AzureFunctionApp@1
             displayName: 'Azure functions app deploy'
             inputs:
               azureSubscription: '$(azureSubscription)'
               appType: functionApp
-              appName: $(functionsappName)
+              appName: $(funcName)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
 
 - stage: Deploy_PR
@@ -165,7 +174,7 @@ stages:
   dependsOn: Build
   condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
   variables:
-    functionsappName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['Outputs.functionsappName'] ]
+    funcName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsappName'] ]
     slotDevName: 'dev'
   jobs:
   - deployment: Deploy_PR
@@ -183,7 +192,7 @@ stages:
             inputs:
               azureSubscription: '$(azureSubscription)'
               appType: functionApp
-              appName: $(functionsappName)
+              appName: $(funcName)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
               deployToSlotOrASE: true
               slotName: $(slotDevName)
