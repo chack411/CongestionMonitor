@@ -31,8 +31,50 @@ variables:
   azureSubscription: 'e5539dec-f14a-4c79-912a-8e0f50efc5e6'
 
 stages:
+- stage: Build
+  displayName: 'Build Azure Functions App'
+
+  variables:
+    workingDirectory: '$(System.DefaultWorkingDirectory)/CongestionMonitorFunctionApp'
+    dotnetVersion: '3.1.x'
+    buildConfiguration: 'Release'
+
+  jobs:
+  - job: Build
+    displayName: 'Build Function App'
+    pool:
+      vmImage: $(vmImageName)  
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Install latest .NET Core SDK'
+      inputs:
+        packageType: sdk
+        version: $(dotnetVersion)
+        installationPath: $(Agent.ToolsDirectory)/dotnet
+
+    - task: DotNetCoreCLI@2
+      displayName: 'dotnet build'
+      inputs:
+        command: 'build'
+        projects: |
+          $(workingDirectory)/*.csproj
+        arguments: --output $(workingDirectory)/publish_output --configuration $(buildConfiguration)
+
+    - task: ArchiveFiles@2
+      displayName: 'Archive files'
+      inputs:
+        rootFolderOrFile: '$(workingDirectory)/publish_output'
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+        replaceExistingArchive: true
+
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+      artifact: drop
+
 - stage: ARM_Deployment
   displayName: 'Deployment with ARM Template'
+  dependsOn: Build
   variables:
   - group: cm-resource-param
   - name: workingDirectory
@@ -93,69 +135,15 @@ stages:
           Write-Host '$(functionsapp_Url)'
           az staticwebapp appsettings set -g '$(resourceName)' -n '$(staticwebName)' --setting-names VUE_APP_API_BASE_URL='$(functionsapp_Url)'
 
-- stage: Build
-  displayName: 'Build Azure Functions App'
-  variables:
-    workingDirectory: '$(System.DefaultWorkingDirectory)/CongestionMonitorFunctionApp'
-    dotnetVersion: '3.1.x'
-    buildConfiguration: 'Release'
-
-  jobs:
-  - job: BuildFunc
-    displayName: 'Build Function App'
-    variables:
-      funcName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsappName'] ]
-    pool:
-      vmImage: $(vmImageName)  
-    steps:
-    - task: UseDotNet@2
-      displayName: 'Install latest .NET Core SDK'
-      inputs:
-        packageType: sdk
-        version: $(dotnetVersion)
-        installationPath: $(Agent.ToolsDirectory)/dotnet
-
-    - task: DotNetCoreCLI@2
-      displayName: 'dotnet build'
-      inputs:
-        command: 'build'
-        projects: |
-          $(workingDirectory)/*.csproj
-        arguments: --output $(workingDirectory)/publish_output --configuration $(buildConfiguration)
-
-    - task: ArchiveFiles@2
-      displayName: 'Archive files'
-      inputs:
-        rootFolderOrFile: '$(workingDirectory)/publish_output'
-        includeRootFolder: false
-        archiveType: zip
-        archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
-        replaceExistingArchive: true
-
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
-      artifact: drop
-
-    - task: PowerShell@2
-      displayName: 'Get funcName at Build'
-      name: OutputValueBuild
-      inputs:
-        pwsh: true
-        targetType: 'inline'
-        script: |
-          $func_name='$(funcName)'
-          Write-Host '$(funcName)'
-          Write-Host '$(func_name)'
-          Write-Host "##vso[task.setvariable variable=funcName2;isOutput=true]$func_name"
-
 - stage: Deploy_Staging
   displayName: 'Deploy Staging'
-  dependsOn: Build
+  dependsOn: ARM_Deployment
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
   jobs:
   - deployment: Deploy_Staging
     variables:
-      funcName: $[ stageDependencies.Build.BuildFunc.outputs['OutputValueBuild.funcName2'] ]
+      funcName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsappName'] ]
       slotStagingName: 'staging'
     pool:
       vmImage: $(vmImageName)
@@ -164,7 +152,7 @@ stages:
       runOnce:
         deploy:
           steps:
-
+          - PowerShell: Write-Host '$(funcName)'
           - task: PowerShell@2
             displayName: 'Get deployent outputs'
             inputs:
@@ -180,15 +168,15 @@ stages:
               appType: functionApp
               appName: $(funcName)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
-
+        
 - stage: Deploy_PR
   displayName: 'Deploy PR'
-  dependsOn: Build
+  dependsOn: ARM_Deployment
   condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
   jobs:
   - deployment: Deploy_PR
     variables:
-      funcName: $[ stageDependencies.Build.BuildFunc.outputs['OutputValueBuild.funcName2'] ]
+      funcName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsappName'] ]
       slotDevName: 'dev'
     pool:
       vmImage: $(vmImageName)
