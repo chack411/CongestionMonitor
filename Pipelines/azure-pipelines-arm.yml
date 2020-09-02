@@ -103,4 +103,4 @@ stages:
         inlineScript: |
           Write-Host '$(staticwebName)'
           Write-Host '$(functionsapp_Url)'
-          az staticwebapp appsettings set -g $(resourceName) -n $(staticwebName) --setting-names VUE_APP_API_BASE_URL=$(functionsapp_Url)
+          az staticwebapp appsettings set -g '$(resourceName)' -n '$(staticwebName)' --setting-names VUE_APP_API_BASE_URL='$(functionsapp_Url)'
