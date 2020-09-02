@@ -26,7 +26,6 @@ pr:
 
 variables:
   vmImageName: 'windows-latest'
-  functionsappName: ''
 
   # Azure Resource Manager connection created during pipeline creation
   azureSubscription: 'e5539dec-f14a-4c79-912a-8e0f50efc5e6'
@@ -38,9 +37,10 @@ stages:
   - group: cm-resource-param
   - name: workingDirectory
     value: '$(System.DefaultWorkingDirectory)/ARMTemplates'
+
   jobs:
   - job: Deploy
-    displayName: 'ARM Deployment Job'
+    displayName: 'ARM Deployment'
     pool:
       vmImage: $(vmImageName)
 
@@ -63,6 +63,7 @@ stages:
         deploymentOutputs: 'cm-arm-deployment-outputs'
 
     - task: PowerShell@2
+      name: Outputs
       displayName: 'Get deployent outputs'
       enabled: true
       inputs:
@@ -95,12 +96,7 @@ stages:
 - stage: Build
   displayName: 'Build Azure Functions App'
   variables:
-    # Function app slot settings
-    slotStagingName: 'staging'
-    slotDevName: 'dev'
-    # Working Directory
     workingDirectory: '$(System.DefaultWorkingDirectory)/CongestionMonitorFunctionApp'
-    # .NET Core configrations
     dotnetVersion: '3.1.x'
     buildConfiguration: 'Release'
 
@@ -142,6 +138,9 @@ stages:
   displayName: 'Deploy Staging'
   dependsOn: Build
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  variables:
+    functionsappName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['Outputs.functionsappName'] ]
+    slotStagingName: 'staging'
   jobs:
   - deployment: Deploy_Staging
     variables:
@@ -165,6 +164,9 @@ stages:
   displayName: 'Deploy PR'
   dependsOn: Build
   condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+  variables:
+    functionsappName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['Outputs.functionsappName'] ]
+    slotDevName: 'dev'
   jobs:
   - deployment: Deploy_PR
     variables:
