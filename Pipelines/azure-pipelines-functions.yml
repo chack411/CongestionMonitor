@@ -76,10 +76,10 @@ stages:
           $static_rul=$out.staticweb_Url.value
           $func_name=$out.functionsappName.value
           $func_rul=$out.functionsapp_Url.value
-          Write-Host "##vso[task.setvariable variable=staticwebName]$static_name"
-          Write-Host "##vso[task.setvariable variable=staticweb_Url]$static_rul"
-          Write-Host "##vso[task.setvariable variable=functionsappName]$func_name"
-          Write-Host "##vso[task.setvariable variable=functionsapp_Url]$func_rul"
+          Write-Host "##vso[task.setvariable variable=staticwebName;isOutput=true]$static_name"
+          Write-Host "##vso[task.setvariable variable=staticweb_Url;isOutput=true]$static_rul"
+          Write-Host "##vso[task.setvariable variable=functionsappName;isOutput=true]$func_name"
+          Write-Host "##vso[task.setvariable variable=functionsapp_Url;isOutput=true]$func_rul"
 
     - task: AzureCLI@2
       displayName: 'Set AppSettings to Static Web App'
