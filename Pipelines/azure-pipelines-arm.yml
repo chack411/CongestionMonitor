@@ -91,3 +91,13 @@ stages:
           Write-Host '$(staticweb_Url)'
           Write-Host '$(functionsappName)'
           Write-Host '$(functionsapp_Url)'
+
+    - task: AzureCLI@2
+      displayName: 'Set AppSettings to Static Web App'
+      inputs:
+        azureSubscription: 'Edtter (bd5c9737-10a5-4178-9b83-fd223f7b4bb4)'
+        scriptType: ps
+        scriptLocation: inlineScript
+        inlineScript: |
+          az --version
+          az account show
