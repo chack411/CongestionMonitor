@@ -104,8 +104,7 @@ stages:
   - job: Build
     displayName: 'Build Function App'
     pool:
-      vmImage: $(vmImageName)
-
+      vmImage: $(vmImageName)  
     steps:
     - task: UseDotNet@2
       displayName: 'Install latest .NET Core SDK'
@@ -138,13 +137,12 @@ stages:
   displayName: 'Deploy Staging'
   dependsOn: Build
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-  variables:
-    funcName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsappName'] ]
-    slotStagingName: 'staging'
+
   jobs:
   - deployment: Deploy_Staging
     variables:
-    - group: cm-resource-param
+      funcName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsappName'] ]
+      slotStagingName: 'staging'
     pool:
       vmImage: $(vmImageName)
     environment: 'development'
@@ -173,13 +171,11 @@ stages:
   displayName: 'Deploy PR'
   dependsOn: Build
   condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
-  variables:
-    funcName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsappName'] ]
-    slotDevName: 'dev'
   jobs:
   - deployment: Deploy_PR
     variables:
-    - group: cm-resource-param
+      funcName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsappName'] ]
+      slotDevName: 'dev'
     pool:
       vmImage: $(vmImageName)
     environment: 'development-pr'
