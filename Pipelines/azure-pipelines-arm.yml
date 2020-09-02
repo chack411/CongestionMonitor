@@ -63,10 +63,12 @@ stages:
         targetType: 'inline'
         script: |
           $out=ConvertFrom-Json '$(cm-arm-deployment-outputs)'
+          $static_name=$out.staticwebName.value
           $static_rul=$out.staticweb_Url.value
           $func_name=$out.functionsappName.value
           $func_rul=$out.functionsapp_Url.value
 
+          Write-Host "##vso[task.setvariable variable=staticwebName]$static_name"
           Write-Host "##vso[task.setvariable variable=staticweb_Url]$static_rul"
           Write-Host "##vso[task.setvariable variable=functionsappName]$func_name"
           Write-Host "##vso[task.setvariable variable=functionsapp_Url]$func_rul"
@@ -83,7 +85,7 @@ stages:
 
     - task: PowerShell@2
       displayName: 'check variables'
-      enabled: true
+      enabled: false
       inputs:
         pwsh: true
         targetType: 'inline'
@@ -99,7 +101,6 @@ stages:
         scriptType: 'pscore'
         scriptLocation: 'inlineScript'
         inlineScript: |
+          Write-Host '$(staticwebName)'
           Write-Host '$(functionsapp_Url)'
-          az --version
-          az account show -o table
-          az staticwebapp -h
+          az staticwebapp staticwebapp appsettings set -g $(resourceName) -n $(staticwebName) --setting-names VUE_APP_API_BASE_URL=$(functionsapp_Url)
