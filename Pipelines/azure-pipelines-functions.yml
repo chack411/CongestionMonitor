@@ -152,13 +152,6 @@ stages:
       runOnce:
         deploy:
           steps:
-          - task: PowerShell@2
-            displayName: 'Get deployent outputs'
-            inputs:
-              pwsh: true
-              targetType: 'inline'
-              script: |
-                Write-Host '$(funcName)'
           - task: AzureFunctionApp@1
             displayName: 'Azure functions app deploy'
             inputs:
@@ -167,12 +160,12 @@ stages:
               appName: $(funcName)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
         
-- stage: Deploy_PR
-  displayName: 'Deploy PR'
+- stage: Deploy_Dev
+  displayName: 'Deploy Dev'
   dependsOn: ARM_Deployment
   condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
   jobs:
-  - deployment: Deploy_PR
+  - deployment: Deploy_Dev
     variables:
       funcName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsappName'] ]
       slotDevName: 'dev'
@@ -183,13 +176,6 @@ stages:
       runOnce:
         deploy:
           steps:
-          - task: PowerShell@2
-            displayName: 'Get deployent outputs'
-            inputs:
-              pwsh: true
-              targetType: 'inline'
-              script: |
-                Write-Host '$(funcName)'
           - task: AzureFunctionApp@1
             displayName: 'Azure functions app deploy'
             inputs:
