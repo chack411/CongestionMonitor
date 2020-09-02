@@ -1,3 +1,4 @@
+# Azure Resource Manager Deployment for Congestion Monitor resources
 # .NET Core Function App to Windows on Azure
 # Build a .NET Core function app and deploy it to Azure as a Windows function App.
 # Add steps that analyze code, save build artifacts, deploy, and more:
@@ -9,6 +10,7 @@ trigger:
      - master
   paths:
     include:
+      - ARMTemplates/*
       - CongestionMonitorFunctionApp/*
       - Pipelines/azure-pipelines-functions.yml
 
@@ -18,30 +20,88 @@ pr:
      - master
   paths:
     include:
+      - ARMTemplates/*
       - CongestionMonitorFunctionApp/*
       - Pipelines/azure-pipelines-functions.yml
 
 variables:
-  # Azure Resource Manager connection created during pipeline creation
-  azureSubscription: 'e5539dec-f14a-4c79-912a-8e0f50efc5e6'
-
-  # Function app slot settings
-  slotStagingName: 'staging'
-  slotDevName: 'dev'
-
-  # Agent VM image name
   vmImageName: 'windows-latest'
-
-  # Working Directory
-  workingDirectory: '$(System.DefaultWorkingDirectory)/CongestionMonitorFunctionApp'
-
-  # .NET Core configrations
-  dotnetVersion: '3.1.x'
-  buildConfiguration: 'Release'
+  functionsappName: ''
 
 stages:
+- stage: ARM_Deployment
+  displayName: 'Deployment with ARM Template'
+  variables:
+  - group: cm-resource-param
+  - name: workingDirectory
+    value: '$(System.DefaultWorkingDirectory)/ARMTemplates'
+  jobs:
+  - job: Deploy
+    displayName: 'ARM Deployment Job'
+    pool:
+      vmImage: $(vmImageName)
+
+    steps:
+    - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'Run ARM Deployment'
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: 'Edtter (bd5c9737-10a5-4178-9b83-fd223f7b4bb4)'
+        subscriptionId: 'bd5c9737-10a5-4178-9b83-fd223f7b4bb4'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: $(resourceName)
+        location: $(locationName)
+        templateLocation: 'Linked artifact'
+        csmFile: '$(workingDirectory)/template.json'
+        csmParametersFile: '$(workingDirectory)/parameters.json'
+        overrideParameters: -sites_cm_repositoryToken $(repositoryToken)
+        deploymentMode: 'Incremental'
+        deploymentName: 'cm-arm-deployment'
+        deploymentOutputs: 'cm-arm-deployment-outputs'
+
+    - task: PowerShell@2
+      displayName: 'Get deployent outputs'
+      enabled: true
+      inputs:
+        pwsh: true
+        targetType: 'inline'
+        script: |
+          # Write-Host '$(cm-arm-deployment-outputs)'
+          $out=ConvertFrom-Json '$(cm-arm-deployment-outputs)'
+          $static_name=$out.staticwebName.value
+          $static_rul=$out.staticweb_Url.value
+          $func_name=$out.functionsappName.value
+          $func_rul=$out.functionsapp_Url.value
+          Write-Host "##vso[task.setvariable variable=staticwebName]$static_name"
+          Write-Host "##vso[task.setvariable variable=staticweb_Url]$static_rul"
+          Write-Host "##vso[task.setvariable variable=functionsappName]$func_name"
+          Write-Host "##vso[task.setvariable variable=functionsapp_Url]$func_rul"
+
+    - task: AzureCLI@2
+      displayName: 'Set AppSettings to Static Web App'
+      enabled: false
+      inputs:
+        azureSubscription: 'Edtter (bd5c9737-10a5-4178-9b83-fd223f7b4bb4)'
+        scriptType: 'pscore'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          Write-Host '$(staticwebName)'
+          Write-Host '$(functionsapp_Url)'
+          az staticwebapp appsettings set -g '$(resourceName)' -n '$(staticwebName)' --setting-names VUE_APP_API_BASE_URL='$(functionsapp_Url)'
+
 - stage: Build
   displayName: 'Build Azure Functions App'
+  variables:
+    # Azure Resource Manager connection created during pipeline creation
+    azureSubscription: 'e5539dec-f14a-4c79-912a-8e0f50efc5e6'
+    # Function app slot settings
+    slotStagingName: 'staging'
+    slotDevName: 'dev'
+    # Working Directory
+    workingDirectory: '$(System.DefaultWorkingDirectory)/CongestionMonitorFunctionApp'
+    # .NET Core configrations
+    dotnetVersion: '3.1.x'
+    buildConfiguration: 'Release'
 
   jobs:
   - job: Build
@@ -99,8 +159,6 @@ stages:
               appType: functionApp
               appName: $(functionsappName)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
-              # deployToSlotOrASE: true
-              # slotName: $(slotStagingName)
 
 - stage: Deploy_PR
   displayName: 'Deploy PR'
