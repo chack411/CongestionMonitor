@@ -21,9 +21,6 @@ pr:
       - Pipelines/azure-pipelines-console.yml
 
 variables:
-  # Azure Resource Manager connection created during pipeline creation
-  azureSubscription: 'e5539dec-f14a-4c79-912a-8e0f50efc5e6'
-
   # Agent VM image name
   vmImageName: 'windows-latest'
 
