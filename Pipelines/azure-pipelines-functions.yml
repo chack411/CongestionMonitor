@@ -147,8 +147,8 @@ stages:
               pwsh: true
               targetType: 'inline'
               script: |
-                $message1="Function App: $(functionsapp_Url)"
-                $message2="Static Web App: $(staticweb_Url)"
+                $message1="Function App: $(OutputValues.functionsapp_Url)"
+                $message2="Static Web App: $(OutputValues.staticweb_Url)"
                 Write-Host "##vso[task.setvariable variable=GITHUB_COMMENT]$message1"
                 Write-Host "##vso[task.setvariable variable=GITHUB_COMMENT]$message2"
 
@@ -221,7 +221,7 @@ stages:
               pwsh: true
               targetType: 'inline'
               script: |
-                $message1="Function App: $(functionsapp_Url)"
-                $message2="Static Web App: $(staticweb_Url)"
+                $message1="Function App: $(OutputValues.functionsapp_Url)"
+                $message2="Static Web App: $(OutputValues.staticweb_Url)"
                 Write-Host "##vso[task.setvariable variable=GITHUB_COMMENT]$message1"
                 Write-Host "##vso[task.setvariable variable=GITHUB_COMMENT]$message2"
