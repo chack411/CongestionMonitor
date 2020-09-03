@@ -7,10 +7,6 @@ variables:
 - group: cm-resource-param
 - name: vmImageName
   value: 'ubuntu-latest'
-- name: azureServiceConnectionName
-  value: 'Edtter (bd5c9737-10a5-4178-9b83-fd223f7b4bb4)'
-- name: azureSubscriptionId
-  value: 'bd5c9737-10a5-4178-9b83-fd223f7b4bb4'
 
 stages:
 - stage: Deployment
