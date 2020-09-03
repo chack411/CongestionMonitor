@@ -136,7 +136,7 @@ stages:
               azureSubscription: $(azureServiceConnectionName)
               resourceGroupName: $(resourceName)
               appType: functionApp
-              appName: $(functionsappName)
+              appName: '$(functionsappName)'
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
 
           - task: AzureCLI@2
