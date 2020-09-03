@@ -3,15 +3,16 @@
 trigger: none
 pr: none
 
+variables:
+- group: cm-resource-param
+- name: vmImageName
+  value: 'ubuntu-latest'
+- name: workingDirectory
+  value: '$(System.DefaultWorkingDirectory)/ARMTemplates'
+
 stages:
 - stage: Deployment
   displayName: 'Deployment with ARM Template'
-  variables:
-  - group: cm-resource-param
-  - name: workingDirectory
-    value: '$(System.DefaultWorkingDirectory)/ARMTemplates'
-  - name: vmImageName
-    value: 'ubuntu-latest'
   
   jobs:
   - job: Deploy
