@@ -47,7 +47,6 @@ stages:
     steps:
     - task: UseDotNet@2
       displayName: 'Install latest .NET Core SDK'
-      enabled: false
       inputs:
         packageType: sdk
         version: $(dotnetVersion)
@@ -85,61 +84,62 @@ stages:
   dependsOn: Build
 
   jobs:
-  - job: Deploy
+  - deployment: Deploy
     displayName: 'ARM Deployment'
-    variables:
-      workingDirectory: '$(System.DefaultWorkingDirectory)/ARMTemplates'
     pool:
       vmImage: $(vmImageName)
+    environment: 'development-arm'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'Run ARM Deployment'
+            inputs:
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: $(azureServiceConnectionName)
+              subscriptionId: $(azureSubscriptionId)
+              action: 'Create Or Update Resource Group'
+              resourceGroupName: $(resourceName)
+              location: $(locationName)
+              templateLocation: 'Linked artifact'
+              csmFile: '$(Pipeline.Workspace)/drop/template.json'
+              csmParametersFile: '$(Pipeline.Workspace)/drop/parameters.json'
+              overrideParameters: -sites_cm_repositoryToken $(repositoryToken)
+              deploymentMode: 'Incremental'
+              deploymentName: 'cm-arm-deployment'
+              deploymentOutputs: 'cm-arm-deployment-outputs'
 
-    steps:
-    - task: AzureResourceManagerTemplateDeployment@3
-      displayName: 'Run ARM Deployment'
-      inputs:
-        deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: $(azureServiceConnectionName)
-        subscriptionId: $(azureSubscriptionId)
-        action: 'Create Or Update Resource Group'
-        resourceGroupName: $(resourceName)
-        location: $(locationName)
-        templateLocation: 'Linked artifact'
-        csmFile: '$(workingDirectory)/template.json'
-        csmParametersFile: '$(workingDirectory)/parameters.json'
-        overrideParameters: -sites_cm_repositoryToken $(repositoryToken)
-        deploymentMode: 'Incremental'
-        deploymentName: 'cm-arm-deployment'
-        deploymentOutputs: 'cm-arm-deployment-outputs'
+          - task: PowerShell@2
+            name: OutputValues
+            displayName: 'Get deployent outputs'
+            enabled: true
+            inputs:
+              pwsh: true
+              targetType: 'inline'
+              script: |
+                # Write-Host '$(cm-arm-deployment-outputs)'
+                $out=ConvertFrom-Json '$(cm-arm-deployment-outputs)'
+                $static_name=$out.staticwebName.value
+                $static_rul=$out.staticweb_Url.value
+                $func_name=$out.functionsappName.value
+                $func_rul=$out.functionsapp_Url.value
+                Write-Host "##vso[task.setvariable variable=staticwebName;isOutput=true]$static_name"
+                Write-Host "##vso[task.setvariable variable=staticweb_Url;isOutput=true]$static_rul"
+                Write-Host "##vso[task.setvariable variable=functionsappName;isOutput=true]$func_name"
+                Write-Host "##vso[task.setvariable variable=functionsapp_Url;isOutput=true]$func_rul"
 
-    - task: PowerShell@2
-      name: OutputValues
-      displayName: 'Get deployent outputs'
-      enabled: true
-      inputs:
-        pwsh: true
-        targetType: 'inline'
-        script: |
-          # Write-Host '$(cm-arm-deployment-outputs)'
-          $out=ConvertFrom-Json '$(cm-arm-deployment-outputs)'
-          $static_name=$out.staticwebName.value
-          $static_rul=$out.staticweb_Url.value
-          $func_name=$out.functionsappName.value
-          $func_rul=$out.functionsapp_Url.value
-          Write-Host "##vso[task.setvariable variable=staticwebName;isOutput=true]$static_name"
-          Write-Host "##vso[task.setvariable variable=staticweb_Url;isOutput=true]$static_rul"
-          Write-Host "##vso[task.setvariable variable=functionsappName;isOutput=true]$func_name"
-          Write-Host "##vso[task.setvariable variable=functionsapp_Url;isOutput=true]$func_rul"
-
-    - task: AzureCLI@2
-      displayName: 'Set AppSettings to Static Web App'
-      enabled: false
-      inputs:
-        azureSubscription: $(azureServiceConnectionName)
-        scriptType: 'pscore'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          Write-Host '$(staticwebName)'
-          Write-Host '$(functionsapp_Url)'
-          az staticwebapp appsettings set -g '$(resourceName)' -n '$(staticwebName)' --setting-names VUE_APP_API_BASE_URL='$(functionsapp_Url)'
+          - task: AzureCLI@2
+            displayName: 'Set AppSettings to Static Web App'
+            enabled: false
+            inputs:
+              azureSubscription: $(azureServiceConnectionName)
+              scriptType: 'pscore'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                Write-Host '$(staticwebName)'
+                Write-Host '$(functionsapp_Url)'
+                az staticwebapp appsettings set -g '$(resourceName)' -n '$(staticwebName)' --setting-names VUE_APP_API_BASE_URL='$(functionsapp_Url)'
 
 - stage: Deploy_Staging
   displayName: 'Deploy Staging'
@@ -169,17 +169,6 @@ stages:
               appType: functionApp
               appName: $(funcName)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
-
-          - task: PowerShell@2
-            displayName: 'Write a comment for GitHub'
-            inputs:
-              pwsh: true
-              targetType: 'inline'
-              script: |
-                $message1="Function App: $(funcUrl)"
-                $message2="Static Web App: $(staticWebUrl)"
-                Write-Host "##vso[task.setvariable variable=GITHUB_COMMENT]$message1"
-                Write-Host "##vso[task.setvariable variable=GITHUB_COMMENT]$message2"
 
 - stage: Deploy_Dev
   displayName: 'Deploy Dev'
