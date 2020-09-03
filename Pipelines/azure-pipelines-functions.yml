@@ -28,10 +28,6 @@ variables:
 - group: cm-resource-param
 - name: vmImageName
   value: 'windows-latest'
-- name: azureServiceConnectionName
-  value: 'Edtter (bd5c9737-10a5-4178-9b83-fd223f7b4bb4)'
-- name: azureSubscriptionId
-  value: 'bd5c9737-10a5-4178-9b83-fd223f7b4bb4'
 
 stages:
 - stage: Build
@@ -129,7 +125,7 @@ stages:
       displayName: 'Set AppSettings to Static Web App'
       enabled: false
       inputs:
-        azureSubscription: 'Edtter (bd5c9737-10a5-4178-9b83-fd223f7b4bb4)'
+        azureSubscription: $(azureServiceConnectionName)
         scriptType: 'pscore'
         scriptLocation: 'inlineScript'
         inlineScript: |
@@ -147,6 +143,8 @@ stages:
     displayName: 'Deploy Function App for Staging'
     variables:
       funcName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsappName'] ]
+      funcUrl: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsapp_Url'] ]
+      staticWebUrl: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.staticweb_Url'] ]
       slotStagingName: 'staging'
     pool:
       vmImage: $(vmImageName)
@@ -163,7 +161,18 @@ stages:
               appType: functionApp
               appName: $(funcName)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
-        
+
+          - task: PowerShell@2
+            displayName: 'Write a comment for GitHub'
+            inputs:
+              pwsh: true
+              targetType: 'inline'
+              script: |
+                $message1="Function App: $(funcUrl)"
+                $message2="Static Web App: $(staticWebUrl)"
+                Write-Host "##vso[task.setvariable variable=GITHUB_COMMENT]$message1"
+                Write-Host "##vso[task.setvariable variable=GITHUB_COMMENT]$message2"
+
 - stage: Deploy_Dev
   displayName: 'Deploy Dev'
   dependsOn: ARM_Deployment
