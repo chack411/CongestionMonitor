@@ -43,7 +43,8 @@ stages:
   - job: Build
     displayName: 'Build Function App'
     pool:
-      vmImage: $(vmImageName)  
+      vmImage: $(vmImageName)
+
     steps:
     - task: UseDotNet@2
       displayName: 'Install latest .NET Core SDK'
@@ -164,10 +165,13 @@ stages:
   displayName: 'Deploy Dev'
   dependsOn: ARM_Deployment
   condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+
   jobs:
   - deployment: Deploy_Dev
     variables:
       funcName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsappName'] ]
+      funcUrl: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsapp_Url'] ]
+      staticWebUrl: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.staticweb_Url'] ]
       slotDevName: 'dev'
     pool:
       vmImage: $(vmImageName)
@@ -185,3 +189,14 @@ stages:
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
               deployToSlotOrASE: true
               slotName: $(slotDevName)
+
+          - task: PowerShell@2
+            displayName: 'Write a PR comment for GitHub'
+            inputs:
+              pwsh: true
+              targetType: 'inline'
+              script: |
+                $message1="Function App: $(funcUrl)"
+                $message2="Static Web App: $(staticWebUrl)"
+                Write-Host "##vso[task.setvariable variable=GITHUB_COMMENT]$message1"
+                Write-Host "##vso[task.setvariable variable=GITHUB_COMMENT]$message2"

@@ -1,39 +1,21 @@
 # ARM Deployment for Congestion Monitor resources
 
-trigger:
-  branches:
-   include:
-     - master
-  paths:
-    include:
-      - ARMTemplates/template.json
-      - ARMTemplates/parameters.json
-      - Pipelines/azure-pipelines-arm.yml
-
-pr:
-  branches:
-   include:
-     - master
-  paths:
-    include:
-      - ARMTemplates/template.json
-      - ARMTemplates/parameters.json
-      - Pipelines/azure-pipelines-arm.yml
-
-variables:
-- group: cm-resource-param
-- name: vmImageName
-  value: 'ubuntu-latest'
-- name: workingDirectory
-  value: '$(System.DefaultWorkingDirectory)/ARMTemplates'
+trigger: none
+pr: none
 
 stages:
 - stage: Deployment
   displayName: 'Deployment with ARM Template'
-
+  variables:
+  - group: cm-resource-param
+  - name: workingDirectory
+    value: '$(System.DefaultWorkingDirectory)/ARMTemplates'
+  - name: vmImageName
+    value: 'ubuntu-latest'
+  
   jobs:
   - job: Deploy
-    displayName: 'ARM Deployment Job'
+    displayName: 'ARM Deployment'
     pool:
       vmImage: $(vmImageName)
 
@@ -62,40 +44,20 @@ stages:
         pwsh: true
         targetType: 'inline'
         script: |
+          # Write-Host '$(cm-arm-deployment-outputs)'
           $out=ConvertFrom-Json '$(cm-arm-deployment-outputs)'
           $static_name=$out.staticwebName.value
           $static_rul=$out.staticweb_Url.value
           $func_name=$out.functionsappName.value
           $func_rul=$out.functionsapp_Url.value
-
-          Write-Host "##vso[task.setvariable variable=staticwebName]$static_name"
-          Write-Host "##vso[task.setvariable variable=staticweb_Url]$static_rul"
-          Write-Host "##vso[task.setvariable variable=functionsappName]$func_name"
-          Write-Host "##vso[task.setvariable variable=functionsapp_Url]$func_rul"
-
-          # Write-Host '$(cm-arm-deployment-outputs)'
-          # $face_url=$out.face_API_Endpoint.value
-          # $face_key=$out.face_API_Subscription_Key.value
-          # $facedb_url=$out.faceCountDB_Endpoint.value
-          # $facedb_key=$out.faceCountDB_Key.value
-          # Write-Host "##vso[task.setvariable variable=face_API_Endpoint]$face_url"
-          # Write-Host "##vso[task.setvariable variable=face_API_Subscription_Key]$face_key"
-          # Write-Host "##vso[task.setvariable variable=faceCountDB_Endpoint]$facedb_url"
-          # Write-Host "##vso[task.setvariable variable=faceCountDB_Key]$facedb_key"
-
-    - task: PowerShell@2
-      displayName: 'check variables'
-      enabled: false
-      inputs:
-        pwsh: true
-        targetType: 'inline'
-        script: |
-          Write-Host '$(staticweb_Url)'
-          Write-Host '$(functionsappName)'
-          Write-Host '$(functionsapp_Url)'
+          Write-Host "##vso[task.setvariable variable=staticwebName;isOutput=true]$static_name"
+          Write-Host "##vso[task.setvariable variable=staticweb_Url;isOutput=true]$static_rul"
+          Write-Host "##vso[task.setvariable variable=functionsappName;isOutput=true]$func_name"
+          Write-Host "##vso[task.setvariable variable=functionsapp_Url;isOutput=true]$func_rul"
 
     - task: AzureCLI@2
       displayName: 'Set AppSettings to Static Web App'
+      enabled: false
       inputs:
         azureSubscription: 'Edtter (bd5c9737-10a5-4178-9b83-fd223f7b4bb4)'
         scriptType: 'pscore'
