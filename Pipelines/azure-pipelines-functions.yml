@@ -25,10 +25,12 @@ pr:
       - Pipelines/azure-pipelines-functions.yml
 
 variables:
-  vmImageName: 'windows-latest'
+- group: cm-resource-param
+- name: vmImageName
+  value: 'windows-latest'
 
   # Azure Resource Manager connection created during pipeline creation
-  azureSubscription: 'e5539dec-f14a-4c79-912a-8e0f50efc5e6'
+  # azureSubscription: 'e5539dec-f14a-4c79-912a-8e0f50efc5e6'
 
 stages:
 - stage: Build
@@ -76,14 +78,12 @@ stages:
 - stage: ARM_Deployment
   displayName: 'Deployment with ARM Template'
   dependsOn: Build
-  variables:
-  - group: cm-resource-param
-  - name: workingDirectory
-    value: '$(System.DefaultWorkingDirectory)/ARMTemplates'
 
   jobs:
   - job: Deploy
     displayName: 'ARM Deployment'
+    variables:
+      workingDirectory: '$(System.DefaultWorkingDirectory)/ARMTemplates'
     pool:
       vmImage: $(vmImageName)
 
@@ -143,6 +143,7 @@ stages:
 
   jobs:
   - deployment: Deploy_Staging
+    displayName: 'Deploy Function App for Staging'
     variables:
       funcName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsappName'] ]
       slotStagingName: 'staging'
@@ -156,7 +157,8 @@ stages:
           - task: AzureFunctionApp@1
             displayName: 'Azure functions app deploy'
             inputs:
-              azureSubscription: '$(azureSubscription)'
+              azureSubscription: 'Edtter (bd5c9737-10a5-4178-9b83-fd223f7b4bb4)'
+              resourceGroupName: $(resourceName)
               appType: functionApp
               appName: $(funcName)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
@@ -168,6 +170,7 @@ stages:
 
   jobs:
   - deployment: Deploy_Dev
+    displayName: 'Deploy Function App for Development'
     variables:
       funcName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsappName'] ]
       funcUrl: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsapp_Url'] ]
@@ -175,7 +178,7 @@ stages:
       slotDevName: 'dev'
     pool:
       vmImage: $(vmImageName)
-    environment: 'development-pr'
+    environment: 'development-dev'
     strategy:
       runOnce:
         deploy:
@@ -183,7 +186,8 @@ stages:
           - task: AzureFunctionApp@1
             displayName: 'Azure functions app deploy'
             inputs:
-              azureSubscription: '$(azureSubscription)'
+              azureSubscription: 'Edtter (bd5c9737-10a5-4178-9b83-fd223f7b4bb4)'
+              resourceGroupName: $(resourceName)
               appType: functionApp
               appName: $(funcName)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
