@@ -47,6 +47,7 @@ stages:
     steps:
     - task: UseDotNet@2
       displayName: 'Install latest .NET Core SDK'
+      enabled: false
       inputs:
         packageType: sdk
         version: $(dotnetVersion)
@@ -70,8 +71,9 @@ stages:
         replaceExistingArchive: true
 
     - task: CopyFiles@2
+      displayName: 'Copy ARM Template files'
       inputs:
-        SourceFolder: '$(workingDirectory)/ARMTemplates'
+        SourceFolder: '$(System.DefaultWorkingDirectory)/ARMTemplates'
         Contents: '**'
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
