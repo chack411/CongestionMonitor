@@ -141,17 +141,6 @@ stages:
               appName: $(OutputValues.functionsappName)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
 
-          - task: PowerShell@2
-            displayName: 'Write a comment for GitHub'
-            inputs:
-              pwsh: true
-              targetType: 'inline'
-              script: |
-                $message1="Function App: $(OutputValues.functionsapp_Url)"
-                $message2="Static Web App: $(OutputValues.staticweb_Url)"
-                Write-Host "##vso[task.setvariable variable=GITHUB_COMMENT]$message1"
-                Write-Host "##vso[task.setvariable variable=GITHUB_COMMENT]$message2"
-
 - stage: Deploy_Dev
   displayName: 'Deploy Dev'
   dependsOn: Build
