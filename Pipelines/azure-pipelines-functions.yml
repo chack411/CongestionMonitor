@@ -47,6 +47,7 @@ stages:
     steps:
     - task: UseDotNet@2
       displayName: 'Install latest .NET Core SDK'
+      enabled: false
       inputs:
         packageType: sdk
         version: $(dotnetVersion)
@@ -129,6 +130,15 @@ stages:
                 Write-Host "##vso[task.setvariable variable=functionsappName;isOutput=true]$func_name"
                 Write-Host "##vso[task.setvariable variable=functionsapp_Url;isOutput=true]$func_rul"
 
+          - task: AzureFunctionApp@1
+            displayName: 'Azure functions app deploy'
+            inputs:
+              azureSubscription: $(azureServiceConnectionName)
+              resourceGroupName: $(resourceName)
+              appType: functionApp
+              appName: $(functionsappName)
+              package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
+
           - task: AzureCLI@2
             displayName: 'Set AppSettings to Static Web App'
             enabled: false
@@ -162,6 +172,7 @@ stages:
         deploy:
           steps:
           - task: AzureFunctionApp@1
+            enabled: false
             displayName: 'Azure functions app deploy'
             inputs:
               azureSubscription: $(azureServiceConnectionName)
