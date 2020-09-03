@@ -69,7 +69,13 @@ stages:
         archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
         replaceExistingArchive: true
 
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(workingDirectory)/ARMTemplates'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+    - publish: $(Build.ArtifactStagingDirectory)
       artifact: drop
 
 - stage: ARM_Deployment
