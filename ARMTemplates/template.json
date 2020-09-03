@@ -2,20 +2,24 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "cm_app_name": {
+            "defaultValue": "cmapp",
+            "type": "String"
+        },
         "SignalR_cm_hub_name": {
-            "defaultValue": "cm-hub",
+            "defaultValue": "[concat(parameters('cm_app_name'), '-hub')]",
             "type": "String"
         },
         "accounts_cm_faceapi_name": {
-            "defaultValue": "cm-faceapi",
+            "defaultValue": "[concat(parameters('cm_app_name'), '-faceapi')]",
             "type": "String"
         },
         "databaseAccounts_cm_facesdb_name": {
-            "defaultValue": "cm-facesdb",
+            "defaultValue": "[concat(parameters('cm_app_name'), '-facesdb')]",
             "type": "String"
         },
         "sites_cm_functionsapp_name": {
-            "defaultValue": "cm-functionsapp",
+            "defaultValue": "[concat(parameters('cm_app_name'), '-funcapp')]",
             "type": "String"
         },
         "components_cm_functionsapp_name": {
@@ -27,7 +31,7 @@
             "type": "String"
         },
         "storageAccounts_cmfuncstorageaccount_name": {
-            "defaultValue": "cmfuncstorageaccount",
+            "defaultValue": "[concat(parameters('cm_app_name'), 'storage')]",
             "type": "String"
         },
         "location": {
@@ -39,7 +43,7 @@
             "type": "String"
         },
         "sites_cm_staticweb_name": {
-            "defaultValue": "cm-staticweb",
+            "defaultValue": "[concat(parameters('cm_app_name'), '-staticweb')]",
             "type": "String"
         },
         "sites_cm_repositoryUrl": {
@@ -55,7 +59,7 @@
             "type": "SecureString"
         },
         "sites_cm_appLocation": {
-            "defaultValue": "/",
+            "defaultValue": "CongestionStaticWebVueApp",
             "type": "String"
         },
         "sites_cm_apiLocation": {

@@ -2,32 +2,14 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "sites_cm_functionsapp_name": {
-            "value": "cm-functionsapp-test"
-        },
-        "SignalR_cm_hub_name": {
-            "value": "cm-hub-test"
-        },
-        "accounts_cm_faceapi_name": {
-            "value": "cm-faceapi-test"
-        },
-        "databaseAccounts_cm_facesdb_name": {
-            "value": "cm-facesdb-test"
-        },
-        "storageAccounts_cmfuncstorageaccount_name": {
-            "value": "cmfuncstoragetest"
-        },
-        "sites_cm_staticweb_name": {
-            "value": "cm-staticweb-test"
+        "cm_app_name": {
+            "value": "cmapptest0903"
         },
         "sites_cm_repositoryUrl": {
             "value": "https://github.com/chack411/CongestionMonitor"
         },
         "sites_cm_repositoryToken": {
             "value": ""
-        },
-        "sites_cm_appLocation": {
-            "value": "CongestionStaticWebVueApp"
         }
     }
 }
