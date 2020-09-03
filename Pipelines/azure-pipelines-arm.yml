@@ -60,7 +60,7 @@ stages:
       displayName: 'Set AppSettings to Static Web App'
       enabled: false
       inputs:
-        azureSubscription: 'Edtter (bd5c9737-10a5-4178-9b83-fd223f7b4bb4)'
+        azureSubscription: $(azureServiceConnectionName)
         scriptType: 'pscore'
         scriptLocation: 'inlineScript'
         inlineScript: |
