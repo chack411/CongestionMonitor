@@ -80,16 +80,19 @@ stages:
     - publish: $(Build.ArtifactStagingDirectory)
       artifact: drop
 
-- stage: ARM_Deployment
-  displayName: 'Deployment with ARM Template'
+- stage: Deploy_Staging
+  displayName: 'Deploy Staging'
   dependsOn: Build
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
   jobs:
-  - deployment: Deploy
-    displayName: 'ARM Deployment'
+  - deployment: Deploy_Staging
+    displayName: 'Deploy Function App for Staging'
+    variables:
+      slotStagingName: 'staging'
     pool:
       vmImage: $(vmImageName)
-    environment: 'development-arm'
+    environment: 'development'
     strategy:
       runOnce:
         deploy:
@@ -114,7 +117,6 @@ stages:
           - task: PowerShell@2
             name: OutputValues
             displayName: 'Get deployent outputs'
-            enabled: true
             inputs:
               pwsh: true
               targetType: 'inline'
@@ -139,60 +141,26 @@ stages:
               appName: $(OutputValues.functionsappName)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
 
-          - task: AzureCLI@2
-            displayName: 'Set AppSettings to Static Web App'
-            enabled: false
+          - task: PowerShell@2
+            displayName: 'Write a comment for GitHub'
             inputs:
-              azureSubscription: $(azureServiceConnectionName)
-              scriptType: 'pscore'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                Write-Host '$(staticwebName)'
-                Write-Host '$(functionsapp_Url)'
-                az staticwebapp appsettings set -g '$(resourceName)' -n '$(staticwebName)' --setting-names VUE_APP_API_BASE_URL='$(functionsapp_Url)'
-
-- stage: Deploy_Staging
-  displayName: 'Deploy Staging'
-  dependsOn: ARM_Deployment
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-
-  jobs:
-  - deployment: Deploy_Staging
-    displayName: 'Deploy Function App for Staging'
-    variables:
-      funcName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsappName'] ]
-      funcUrl: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsapp_Url'] ]
-      staticWebUrl: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.staticweb_Url'] ]
-      slotStagingName: 'staging'
-    pool:
-      vmImage: $(vmImageName)
-    environment: 'development'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: AzureFunctionApp@1
-            enabled: false
-            displayName: 'Azure functions app deploy'
-            inputs:
-              azureSubscription: $(azureServiceConnectionName)
-              resourceGroupName: $(resourceName)
-              appType: functionApp
-              appName: $(funcName)
-              package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
+              pwsh: true
+              targetType: 'inline'
+              script: |
+                $message1="Function App: $(functionsapp_Url)"
+                $message2="Static Web App: $(staticweb_Url)"
+                Write-Host "##vso[task.setvariable variable=GITHUB_COMMENT]$message1"
+                Write-Host "##vso[task.setvariable variable=GITHUB_COMMENT]$message2"
 
 - stage: Deploy_Dev
   displayName: 'Deploy Dev'
-  dependsOn: ARM_Deployment
+  dependsOn: Build
   condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
 
   jobs:
   - deployment: Deploy_Dev
     displayName: 'Deploy Function App for Development'
     variables:
-      funcName: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsappName'] ]
-      funcUrl: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.functionsapp_Url'] ]
-      staticWebUrl: $[ stageDependencies.ARM_Deployment.Deploy.outputs['OutputValues.staticweb_Url'] ]
       slotDevName: 'dev'
     pool:
       vmImage: $(vmImageName)
@@ -201,13 +169,48 @@ stages:
       runOnce:
         deploy:
           steps:
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'Run ARM Deployment'
+            inputs:
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: $(azureServiceConnectionName)
+              subscriptionId: $(azureSubscriptionId)
+              action: 'Create Or Update Resource Group'
+              resourceGroupName: $(resourceName)
+              location: $(locationName)
+              templateLocation: 'Linked artifact'
+              csmFile: '$(Pipeline.Workspace)/drop/template.json'
+              csmParametersFile: '$(Pipeline.Workspace)/drop/parameters.json'
+              overrideParameters: -sites_cm_repositoryToken $(repositoryToken)
+              deploymentMode: 'Incremental'
+              deploymentName: 'cm-arm-deployment'
+              deploymentOutputs: 'cm-arm-deployment-outputs'
+
+          - task: PowerShell@2
+            name: OutputValues
+            displayName: 'Get deployent outputs'
+            inputs:
+              pwsh: true
+              targetType: 'inline'
+              script: |
+                # Write-Host '$(cm-arm-deployment-outputs)'
+                $out=ConvertFrom-Json '$(cm-arm-deployment-outputs)'
+                $static_name=$out.staticwebName.value
+                $static_rul=$out.staticweb_Url.value
+                $func_name=$out.functionsappName.value
+                $func_rul=$out.functionsapp_Url.value
+                Write-Host "##vso[task.setvariable variable=staticwebName;isOutput=true]$static_name"
+                Write-Host "##vso[task.setvariable variable=staticweb_Url;isOutput=true]$static_rul"
+                Write-Host "##vso[task.setvariable variable=functionsappName;isOutput=true]$func_name"
+                Write-Host "##vso[task.setvariable variable=functionsapp_Url;isOutput=true]$func_rul"
+
           - task: AzureFunctionApp@1
             displayName: 'Azure functions app deploy'
             inputs:
               azureSubscription: $(azureServiceConnectionName)
               resourceGroupName: $(resourceName)
               appType: functionApp
-              appName: $(funcName)
+              appName: $(OutputValues.functionsappName)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
               deployToSlotOrASE: true
               slotName: $(slotDevName)
@@ -218,7 +221,7 @@ stages:
               pwsh: true
               targetType: 'inline'
               script: |
-                $message1="Function App: $(funcUrl)"
-                $message2="Static Web App: $(staticWebUrl)"
+                $message1="Function App: $(functionsapp_Url)"
+                $message2="Static Web App: $(staticweb_Url)"
                 Write-Host "##vso[task.setvariable variable=GITHUB_COMMENT]$message1"
                 Write-Host "##vso[task.setvariable variable=GITHUB_COMMENT]$message2"
