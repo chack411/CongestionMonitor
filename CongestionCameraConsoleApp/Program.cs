@@ -32,6 +32,7 @@
 // 
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using VideoFrameAnalyzer;
 using Microsoft.Azure.CognitiveServices.Vision.Face;
@@ -48,6 +49,7 @@ namespace CongestionCameraConsoleApp
             // Get Secret variables.
             var configuration = new ConfigurationBuilder()
                 .AddUserSecrets<Program>()
+                .AddJsonFile("appsettings.json")
                 .AddEnvironmentVariables()
                 .AddCommandLine(args, GetCommandLineSwitchMappings())
                 .Build();
