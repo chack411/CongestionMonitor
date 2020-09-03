@@ -28,9 +28,10 @@ variables:
 - group: cm-resource-param
 - name: vmImageName
   value: 'windows-latest'
-
-  # Azure Resource Manager connection created during pipeline creation
-  # azureSubscription: 'e5539dec-f14a-4c79-912a-8e0f50efc5e6'
+- name: azureServiceConnectionName
+  value: 'Edtter (bd5c9737-10a5-4178-9b83-fd223f7b4bb4)'
+- name: azureSubscriptionId
+  value: 'bd5c9737-10a5-4178-9b83-fd223f7b4bb4'
 
 stages:
 - stage: Build
@@ -92,8 +93,8 @@ stages:
       displayName: 'Run ARM Deployment'
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: 'Edtter (bd5c9737-10a5-4178-9b83-fd223f7b4bb4)'
-        subscriptionId: 'bd5c9737-10a5-4178-9b83-fd223f7b4bb4'
+        azureResourceManagerConnection: $(azureServiceConnectionName)
+        subscriptionId: $(azureSubscriptionId)
         action: 'Create Or Update Resource Group'
         resourceGroupName: $(resourceName)
         location: $(locationName)
@@ -157,7 +158,7 @@ stages:
           - task: AzureFunctionApp@1
             displayName: 'Azure functions app deploy'
             inputs:
-              azureSubscription: 'Edtter (bd5c9737-10a5-4178-9b83-fd223f7b4bb4)'
+              azureSubscription: $(azureServiceConnectionName)
               resourceGroupName: $(resourceName)
               appType: functionApp
               appName: $(funcName)
@@ -186,7 +187,7 @@ stages:
           - task: AzureFunctionApp@1
             displayName: 'Azure functions app deploy'
             inputs:
-              azureSubscription: 'Edtter (bd5c9737-10a5-4178-9b83-fd223f7b4bb4)'
+              azureSubscription: $(azureServiceConnectionName)
               resourceGroupName: $(resourceName)
               appType: functionApp
               appName: $(funcName)

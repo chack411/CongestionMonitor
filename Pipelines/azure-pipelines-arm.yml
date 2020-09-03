@@ -7,8 +7,10 @@ variables:
 - group: cm-resource-param
 - name: vmImageName
   value: 'ubuntu-latest'
-- name: workingDirectory
-  value: '$(System.DefaultWorkingDirectory)/ARMTemplates'
+- name: azureServiceConnectionName
+  value: 'Edtter (bd5c9737-10a5-4178-9b83-fd223f7b4bb4)'
+- name: azureSubscriptionId
+  value: 'bd5c9737-10a5-4178-9b83-fd223f7b4bb4'
 
 stages:
 - stage: Deployment
@@ -17,6 +19,8 @@ stages:
   jobs:
   - job: Deploy
     displayName: 'ARM Deployment'
+    variables:
+      workingDirectory: '$(System.DefaultWorkingDirectory)/ARMTemplates'
     pool:
       vmImage: $(vmImageName)
 
@@ -25,8 +29,8 @@ stages:
       displayName: 'Run ARM Deployment'
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: 'Edtter (bd5c9737-10a5-4178-9b83-fd223f7b4bb4)'
-        subscriptionId: 'bd5c9737-10a5-4178-9b83-fd223f7b4bb4'
+        azureResourceManagerConnection: $(azureServiceConnectionName)
+        subscriptionId: $(azureSubscriptionId)
         action: 'Create Or Update Resource Group'
         resourceGroupName: $(resourceName)
         location: $(locationName)
