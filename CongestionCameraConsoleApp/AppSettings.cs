@@ -32,6 +32,10 @@ namespace CongestionCameraConsoleApp
                 Console.WriteLine("Need to set 'Settings:Face_API_Endpoint'");
                 valid = false;
             }
+            else
+            {
+                Console.WriteLine($"Face API: {Face_API_Endpoint}");
+            }
 
             if (String.IsNullOrWhiteSpace(Face_API_Subscription_Key))
             {
@@ -43,6 +47,10 @@ namespace CongestionCameraConsoleApp
             {
                 Console.WriteLine("Need to set 'Settings:FaceCountDB_Endpoint'");
                 valid = false;
+            }
+            else
+            {
+                Console.WriteLine($"Face DB: {FaceCountDB_Endpoint}");
             }
 
             if (String.IsNullOrWhiteSpace(FaceCountDB_Key))
@@ -68,17 +76,29 @@ namespace CongestionCameraConsoleApp
                 Console.WriteLine("Need to set 'Settings:PlaceName'");
                 valid = false;
             }
+            else
+            {
+                Console.WriteLine($"Place: {PlaceName}");
+            }
 
             if (AnalysisIntervalInSeconds <= 0 || AnalysisIntervalInSeconds > 86400)
             {
                 Console.WriteLine("'AnalysisIntervalInSeconds' must be set to a number within 1 to 86400");
                 valid = false;
             }
+            else
+            {
+                Console.WriteLine($"Analysis Interval: {AnalysisIntervalInSeconds}");
+            }
 
             if (CameraIndex < 0)
             {
                 Console.WriteLine("'CameraIndex' must be set to a number grater than or equal to 0");
                 valid = false;
+            }
+            else
+            {
+                Console.WriteLine($"Camera Index: {CameraIndex}");
             }
 
             return valid;

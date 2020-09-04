@@ -46,6 +46,8 @@ namespace CongestionCameraConsoleApp
     {
         private static void Main(string[] args)
         {
+            Console.WriteLine("Initializing Congestion Camera Console App...");
+
             // Get Secret variables.
             var configuration = new ConfigurationBuilder()
                 .AddUserSecrets<Program>()
