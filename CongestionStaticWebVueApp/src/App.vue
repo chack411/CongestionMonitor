@@ -156,7 +156,7 @@
             },
             getMaskRatio(result) {
                 if (result.faceCount > 0)
-                    return result.maskCount / result.faceCount * 100;
+                    return Math.round(result.maskCount / result.faceCount * 100);
                 else
                     return 0;
             }
