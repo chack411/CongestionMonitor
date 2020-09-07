@@ -6,6 +6,8 @@ A few weeks ago, I realized that I have created a demo for my customer last year
 
 The one of the important things is that most of people have a mask on the face right now, so a capability of mask detection is required shuch an application. Fortunately, the Azure Cognitive Services - Face API has a capability to detect a face with (small) mask. Unfortunately, large mask could result in no face to be detected and the recognition rate with mask is not good. But, if needed, you can replace the face recognition to another AI services for the improvement of the recognition rate.
 
+![Congestion Monitor Demo](Documentation/Images/cm_appsdemo.png)
+
 ## Architecture
 
 ![Congestion Monitor](Documentation/Images/cm_architecrue.png)
