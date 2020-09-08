@@ -82,7 +82,7 @@ So, you can see and copy the new token only once. Let's copy and keep the token 
 
 ### Modify parameters for your deployment
 
-And, you should modify `parameters.json` in CongestionMonitor/ARMTemplate with your own parameters.
+You need to modify `parameters.json` in `CongestionMonitor/ARMTemplate` with your own parameters.
 
 ```json
 {
