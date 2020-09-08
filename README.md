@@ -46,7 +46,7 @@ Let's deploy the Congestion Monitor applications using Azure CLI and ARM Templat
 ### Preparation
 
 - If you haven't had an Azure subscription yet, you can create an Azure free account at [Create your Azure free account today](https://azure.microsoft.com/en-us/free/).
-- If you haven"t install the Azure CLI, please see [Install the Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) and setup the CLI with your Azure subscription.
+- If you haven't install the Azure CLI, please see [Install the Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) and setup the CLI with your Azure subscription.
 - If you need more details about the login with the CLI, please see [Sign in with Azure CLI](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli?view=azure-cli-latest).
 
 ### Verify subscription
@@ -68,13 +68,7 @@ If you have more than subscription, make sure that subscription is set as defaul
 az account set -s 'My primary subscription'
 ```
 
-### Create a resource group
-
-```sh
-az group create -g mycmapps-rg -l japaneast
-```
-
-### Create a deployment at resource group you created
+### Generate a personal access token (PAT) for GitHub API
 
 Before create a deployment, you need to generate a personal access token of GitHub that is used to access the GitHub API from Azure Static Web deployment with ARM Template.
 
@@ -85,6 +79,8 @@ Access to [Personal Access Tokens page](https://github.com/settings/tokens) in D
 So, you can see and copy the new token only once. Let's copy and keep the token for the next step.
 
 ![Generated Access Token](Documentation/Images/cm_gh_pat2.png)
+
+### Modify parameters for your deployment
 
 And, you should modify `parameters.json` in CongestionMonitor/ARMTemplate with your own parameters.
 
@@ -106,7 +102,15 @@ And, you should modify `parameters.json` in CongestionMonitor/ARMTemplate with y
 }
 ```
 
-Then, create a deployment at resource group from a local template file: `template.json`, using parameters from a local JSON file: `parameters.json`.
+### Create a resource group
+
+```sh
+az group create -g mycmapps-rg -l japaneast
+```
+
+### Create a deployment and start to deploy
+
+OK, it's time to deploy with ARM template. Let's create a deployment at resource group from a local template file: `template.json`, using parameters from a local JSON file: `parameters.json`.
 
 ```sh
 cd CongestionMonitor/ARMTemplate
