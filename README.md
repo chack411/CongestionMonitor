@@ -1,10 +1,10 @@
 # Congestion Monitor
 
-This repo is Congestion Monitor projects to detect congestion situations through web cameras in real time.
+This repo is the Congestion Monitor project to detect congestion situations through web cameras in real time.
 
 A few weeks ago, I realized that I have created a demo for my customer last year that the application is to detect faces and to show the number and the trend on the browser in realtime. Now, we are facing the COVID-19 situation, and the demand of congestion monitoring is getting higher. So, I decided to rebuild the demo application I created last year and to publish the repo as an Open Source.
 
-One of the important things is that most people have a mask on the face right now, so the capability of mask detection is required such an application. Fortunately, the Azure Cognitive Services - Face API can detect a face with a (small) mask. Unfortunately, a large mask could result in no face to be detected and the recognition rate with a mask is not good. But, if needed, you can replace the face recognition to other AI services for the improvement of the recognition rate.
+One of the important things is that most people have a mask on the face right now, so the capability of mask detection is required such an application. Fortunately, the Azure Cognitive Services - Face API can detect a face with a (small) mask. But, unfortunately, a large mask could result in no face to be detected and the recognition rate with a mask is not good. But, if needed, you can replace the face recognition to other AI services for the improvement of the recognition rate.
 
 ![Congestion Monitor Demo](Documentation/Images/cm_appsdemo.png)
 
@@ -33,7 +33,7 @@ This repo is setting up as Template repository. So, you can create a new GitHub 
 
 ![Use this Template](Documentation/Images/cm_gh_templateproject.png)
 
-After that, clone your repo on GitHub to your local environment.
+After that, clone your repo on GitHub to your local environment and start to develop your own the Congestion Monitor!
 
 ```sh
 git clone https://github.com/(your repo name)/CongestionMonitor.git
@@ -110,7 +110,7 @@ az group create -g mycmapps-rg -l japaneast
 
 ### Create a deployment and start to deploy
 
-OK, it's time to deploy with ARM template. Let's create a deployment at resource group from a local template file: `template.json`, using parameters from a local JSON file: `parameters.json`.
+OK, it's time to deploy with ARM template. Let's create a deployment at the resource group from a local template file: `template.json`, using parameters from a local JSON file: `parameters.json`.
 
 ```sh
 cd CongestionMonitor/ARMTemplate
@@ -120,6 +120,15 @@ az deployment group create \
   --resource-group mycmapps-rg \
   --template-file template.json --parameters @parameters.json
 ```
+
+TODO: screenshot of cli and deployment on azure portal
+
+Once the deployment has been succeeded, you can see resources at the resource group that Congestion Monitor uses.
+
+And also, you can see parameters at the deployment outputs that you need when you configure.
+
+### Build the Congestion Camera Console App
+
 
 
 ## CI/CD deployment using Azure DevOps
