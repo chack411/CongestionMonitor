@@ -129,7 +129,75 @@ And also, you can see parameters at the deployment outputs that you need when yo
 
 ### Build the Congestion Camera Console App
 
+This Camera console app is build on .NET Core and need to access Cognitive Service - Face API and Cosmos DB. For these connections, the application need the endpoints and keys and keep these value in the local environment securely.
 
+The Secret Manager tool of .NET Core is one of the good way to keep secret values in the local environment. It has been already enabled in this console app project and has been added a `UserSecretsId` in the `.csproj` file as follows.
+
+```xml
+<PropertyGroup>
+  <OutputType>Exe</OutputType>
+  <TargetFramework>netcoreapp3.1</TargetFramework>
+  <RuntimeIdentifiers>win-x64;linux-x64;osx-x64</RuntimeIdentifiers>
+  <UserSecretsId>539c2291-103b-46e2-add4-dab7423af9da</UserSecretsId>
+</PropertyGroup>
+```
+
+If you want to re-create the ID for your own console app, you can replace it to any text but is unique. Or, you can create it using following command in the project directory.
+
+```sh
+dotnet user-secrets init
+```
+
+The secret values are stored in a JSON configuration file in a system-protected user profile folder on the local machine.
+
+```sh
+# Windows
+%APPDATA%\Microsoft\UserSecrets\<user_secrets_id>\secrets.json
+
+# Linux / macOS
+~/.microsoft/usersecrets/<user_secrets_id>/secrets.json
+```
+
+#### Set secrets
+
+First, you can see the secret values that you need at the deployment output page of your resource group on your Azure portal.
+
+TODO: screen short deployment output
+
+Then, you set these secrets to run the following command from the directory in which the `.csproj` file exists. You can see the secret values that you need at the deployment output page of your resource group on your Azure portal.
+
+```sh
+dotnet user-secrets set "Settings:Face_API_Endpoint" "<your face API endpoint url here>"
+dotnet user-secrets set "Settings:Face_API_Subscription_Key" "xxxxxxxxxxxxxxxxxxxxxxxxxxx"
+dotnet user-secrets set "Settings:FaceCountDB_Endpoint" "<your face count db endpoint url here>"
+dotnet user-secrets set "Settings:FaceCountDB_Key" "xxxxxxxxxxxxxxxxxxxxxxxxxxx"
+```
+
+You can also refer the sample secrets.json file - `sample-secrets.json` in your repogitory.
+
+#### Build the console app
+
+To run the following command from the directory in which the `.csproj` file exists, you can build the console app for the Congestion Monitor.
+
+```sh
+dotnet build -c Release
+```
+
+Once the build has been scseeded, you can see `CongestionCameraConsoleApp.exe` file in your folder: "CongestionMonitor\CongestionCameraConsoleApp\bin\Release\netcoreapp3.1\"
+
+Or, you can build and run the app directly to run the following command.
+
+```sh
+dotnet run -c Release
+```
+
+![Run Camera App](Documentation/Images/cm_run_cameraapp.png)
+
+Once the Congestion Camera Console App has been successfully started and a web camera has been successfully detected on your PC, and also the app has been successfully connected with Cognitive Services and Cosmos DB, you can see the number of faces that the app detects.
+
+### another parameters you can modify
+
+to be updated
 
 ## CI/CD deployment using Azure DevOps
 
