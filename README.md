@@ -195,13 +195,30 @@ dotnet run -c Release
 
 Once the Congestion Camera Console App has been successfully started and a web camera has been successfully detected on your PC, and also the app has been successfully connected with Cognitive Services and Cosmos DB, you can see the number of faces that the app detects.
 
-### another parameters you can modify
+### Another parameters you can modify
 
-to be updated
+If needed, you can change `PlaceName`, `AnalysisIntervalInSeconds`, and `CameraIndex` parameters to modify `appsettings.json` file in the same directory of the `CongestionCameraConsoleApp.exe`.
+
+```json
+{
+  "Settings": {
+    "PlaceName": "Room 1",
+    "AnalysisIntervalInSeconds": "5",
+    "CameraIndex": "0"
+  }
+}
+```
+
+### Confirm data items in Cosmos DB
+
+Once the camera app has been started, a data item which is recorded the face count, will be created as `Result1` container in `FaceCount` database of your Cosmos DB account. You can see the item to use the Data Explorer in your Cosmos DB account on Azure Portal.
+
+![Cosmos DB Item](Documentation/Images/cm_cosmosdbitem.png)
 
 ## CI/CD deployment using Azure DevOps
 
 To be updated...
+
 
 ## Azure deployment
 
