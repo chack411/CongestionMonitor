@@ -36,7 +36,7 @@ This repo is setting up as a Template Repository. So, you can create a new GitHu
 After that, clone your repo on GitHub to your local environment and start to develop your own Congestion Monitor!
 
 ```sh
-git clone https://github.com/(your repo name)/CongestionMonitor.git
+git clone https://github.com/<yourRepoName>/CongestionMonitor.git
 ```
 
 ## How to deploy with this repo manually
@@ -90,13 +90,13 @@ You need to modify `parameters.json` in `CongestionMonitor/ARMTemplate` with you
     "contentVersion": "1.0.0.0",
     "parameters": {
         "cm_app_name": {
-            "value": "(app resource prefix is here. Ex: mycmapptest)"
+            "value": "<app resource prefix is here. Ex: mycmapptest>"
         },
         "sites_cm_repositoryUrl": {
-            "value": "https://github.com/(your repo name)/CongestionMonitor"
+            "value": "https://github.com/<your repo name>/CongestionMonitor"
         },
         "sites_cm_repositoryToken": {
-            "value": "(personal access token here)"
+            "value": "<personal access token here>"
         }
     }
 }
@@ -117,9 +117,11 @@ az deployment group create \
   --template-file template.json --parameters @parameters.json
 ```
 
-TODO: screenshot of cli and deployment on azure portal
+![ARM Deployment](Documentation/Images/cm_deployment.png)
 
 Once the deployment has been succeeded, you can see resources in the resource group used by the Congestion Monitor.
+
+![Azure Resources](Documentation/Images/cm_resources.png)
 
 And also, you can see parameters you need when configuring the camera console apps in the deployment outputs.
 
@@ -160,7 +162,7 @@ The secret values are stored in a JSON configuration file in a system-protected 
 
 You can see and get the secret values that you need at the deployment output page on your Azure portal.
 
-TODO: screen short deployment output
+![Deployment Outputs](Documentation/Images/cm_deployment_outputs.png)
 
 Then, you run the following command from the directory in which the `CongestionCameraConsoleApp.csproj` file exists and set these secrets.
 
@@ -219,9 +221,29 @@ Once the camera app has been started, a data item that recorded the face count w
 
 ![Cosmos DB Item](Documentation/Images/cm_cosmosdbitem.png)
 
+### Confrim Congestion Status on Static Web App
+
+This project is using Azure Static Web Apps for the dashboard to show the congestion monitor status. [Azure Static Web Apps](https://docs.microsoft.com/en-us/azure/static-web-apps/overview) is a service that automatically builds and deploys full stack web apps to Azure from a GitHub repository.
+
+Once the deployment has been succeeded, you can see a Static Web App resource in the resource group.
+
+![Static Web App resource](Documentation/Images/cm_aswa_resource.png)
+
+And you can also see the URL on the Static Web App Overview page.
+
+![Static Web App Overview](Documentation/Images/cm_aswa_overview.png)
+
+This is an example of the Congestion Status. If you have multiple PC environments with a web camera and set up the Congestion Camera Console App with JSON parameters on each environment, you can monitor multiple states as follows.
+
+![Congestion Monitor App](Documentation/Images/cm_aswa_vueapp.png)
+
+This web application is built with Vue.js and is deployed by GitHub Actions workflow.
+
+![GitHub Actions workflow](Documentation/Images/cm_gha_workflow.png)
+
 ## CI/CD deployment using Azure DevOps
 
-To be updated...
+Maybe, to be updated...
 
 
 ## Azure deployment
