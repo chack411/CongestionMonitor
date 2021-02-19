@@ -28,7 +28,7 @@ variables:
   workingDirectory: '$(System.DefaultWorkingDirectory)/CongestionCameraConsoleApp'
 
   # .NET Core configrations
-  dotnetVersion: '3.1.x'
+  dotnetVersion: '5.0.x'
   buildConfiguration: 'Release'
 
 stages:

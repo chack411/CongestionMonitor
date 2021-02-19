@@ -51,8 +51,10 @@ Let's deploy Congestion Monitor applications using Azure CLI and ARM Template.
 
 ### Verify subscription
 
-Run the command az account list -o table
+Run the command `az login` and `az account list -o table`
 ```sh
+az login
+
 az account list -o table
 
 Name                     CloudName    SubscriptionId                        State    IsDefault
@@ -96,10 +98,20 @@ You need to modify `parameters.json` in `CongestionMonitor/ARMTemplate` with you
             "value": "https://github.com/<your repo name>/CongestionMonitor"
         },
         "sites_cm_repositoryToken": {
-            "value": "<personal access token here>"
+            "value": ""
         }
     }
 }
+```
+
+> You can write your GitHub personal access token that you created above at the value of `sites_cm_repositoryToken` in `parameters.json`. But, to avoid committing the `parameters.json` with the token to a public repository, recommend to set the token as a parameter when creating a deployment using `az deployment group create` as follows.
+
+### Set your `cm_app_name` to .env file
+
+Open `.env` file at `CongestionMonitor\CongestionStaticWebVueApp` and set `cm_app_name` that you set in `parameters.json` to `VUE_APP_API_BASE_URL` value.
+
+```text
+VUE_APP_API_BASE_URL='https://<cm_app_name>-funcapp.azurewebsites.net'
 ```
 
 ### Create a deployment and start to deploy
@@ -114,7 +126,9 @@ az group create -g <yourResourceGroupName> -l japaneast
 az deployment group create \
   --name <yourDeploymentName> \
   --resource-group <yourResourceGroupName> \
-  --template-file template.json --parameters @parameters.json
+  --template-file template.json \
+  --parameters @parameters.json \
+  --parameters sites_cm_repositoryToken=<GitHub personal access token here>
 ```
 
 ![ARM Deployment](Documentation/Images/cm_deployment.png)
