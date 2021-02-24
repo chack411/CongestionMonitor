@@ -106,13 +106,35 @@ You need to modify `parameters.json` in `CongestionMonitor/ARMTemplate` with you
 
 > You can write your GitHub personal access token that you created above at the value of `sites_cm_repositoryToken` in `parameters.json`. But, to avoid committing the `parameters.json` with the token to a public repository, recommend to set the token as a parameter when creating a deployment using `az deployment group create` as follows.
 
-### Set your `cm_app_name` to .env file
+### Set your cm_app_name to .env file
 
-Open `.env` file at `CongestionMonitor\CongestionStaticWebVueApp` and set `cm_app_name` that you set in `parameters.json` to `VUE_APP_API_BASE_URL` value.
+Open `.env` file at `CongestionMonitor\CongestionStaticWebVueApp` and set `<cm_app_name>` that you set in `parameters.json` to `VUE_APP_API_BASE_URL` value.
 
 ```text
 VUE_APP_API_BASE_URL='https://<cm_app_name>-funcapp.azurewebsites.net'
 ```
+
+### Set your cm_app_name to azure-functions-apps.yml file
+
+Open `azure-functions-apps.yml` file at `CongestionMonitor\.github\workflows` and set `<cm_app_name>` to `AZURE_FUNCTIONAPP_NAME` value.
+
+```yml
+env:
+  AZURE_FUNCTIONAPP_NAME: <cm_app_name>-funcapp  # set <cm_app_name> to your application's name
+```
+
+### Commit changes and push your local repository to the GitHub repo.
+
+Entering the following commands, you make a change to the files on your computer, commit the changes locally, and push the commit to the repo on GitHub.
+
+```sh
+cd CongestionMonitor
+git add .
+git commit -m "update cm_app_name"
+git push -u origin master
+```
+
+> You can also use any development tools like Visual Studio Code or Visual Studio 2019 to commit changes and to push your repo to the repo on GitHub.
 
 ### Create a deployment and start to deploy
 
