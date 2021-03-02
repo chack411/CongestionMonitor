@@ -290,9 +290,8 @@ Maybe, to be updated...
 
 |Project|Status|
 |---:|:---|
-|Azure Functions App|[![Build Status](https://dev.azure.com/akirain/Congestion%20Monitor/_apis/build/status/chack411.CongestionMonitorFunctionApp?branchName=master)](https://dev.azure.com/akirain/Congestion%20Monitor/_build/latest?definitionId=71&branchName=master)|
-|Camera Console App|[![Build Status](https://dev.azure.com/akirain/Congestion%20Monitor/_apis/build/status/chack411.CongestionCameraConsoleApp?branchName=master)](https://dev.azure.com/akirain/Congestion%20Monitor/_build/latest?definitionId=72&branchName=master)|
-|Static Vue App|![Static Web for Congestion Status - CI/CD](https://github.com/chack411/CongestionMonitor/workflows/Static%20Web%20for%20Congestion%20Status%20-%20CI/CD/badge.svg)|
+|Azure Functions App|[![Azure Function App for Congestion APIs](https://github.com/chack411/CongestionMonitor/actions/workflows/azure-functions-apps.yml/badge.svg)](https://github.com/chack411/CongestionMonitor/actions/workflows/azure-functions-apps.yml)|
+|Static Web App|[![Static Web for Congestion Status](https://github.com/chack411/CongestionMonitor/actions/workflows/azure-static-web-apps-green-sky-0eff05900.yml/badge.svg)](https://github.com/chack411/CongestionMonitor/actions/workflows/azure-static-web-apps-green-sky-0eff05900.yml)|
 
 ## Contributing
 
