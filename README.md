@@ -201,7 +201,7 @@ dotnet user-secrets set "Settings:FaceCountDB_Endpoint" "<your face count db end
 dotnet user-secrets set "Settings:FaceCountDB_Key" "xxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
-You can also refer to the sample secrets.json file - `sample-secrets.json` in your repository.
+You can also refer to the sample secrets.json file - `sample-secrets.json` in this repository.
 
 #### Build the console app
 
@@ -317,7 +317,7 @@ This web application is built with Vue.js and is deployed by GitHub Actions work
 
 ## CI/CD deployment using Azure DevOps
 
-If you are an Azure DevOps user, you can refer to Azure Pipeline YAML files in the `Pipelines` directory in your repo and can run pipelines for ARM deployment, Function App deployment, and building Console Camera app.
+If you are an Azure DevOps user, you can refer to Azure Pipeline YAML files in the `Pipelines` directory in this repo and can run pipelines for ARM deployment, Function App deployment, and building Console Camera app.
 
 ## Build Status
 
