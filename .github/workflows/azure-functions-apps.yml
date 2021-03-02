@@ -22,7 +22,7 @@ on:
 #   AZURE_FUNCTIONAPP_PUBLISH_PROFILE
 
 env:
-  AZURE_FUNCTIONAPP_NAME: cmapptest0219a-funcapp  # set <cm_app_name> to your application's name
+  AZURE_FUNCTIONAPP_NAME: <cm_app_name>-funcapp  # set <cm_app_name> to your application's name
   AZURE_FUNCTIONAPP_PACKAGE_PATH: 'CongestionMonitorFunctionApp'
   DOTNET_VERSION: '3.1.x'
 
