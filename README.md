@@ -24,7 +24,6 @@ One of the important things is that most people have a mask on the face right no
 * Azure Storage
 * Azure Application Insights
 * Azure Resource Manager
-* Azure DevOps/Pipelines
 * GitHub Actions
 
 ## How to use source codes in this repo
@@ -112,15 +111,6 @@ Open `.env` file at `CongestionMonitor\CongestionStaticWebVueApp` and set `<cm_a
 
 ```text
 VUE_APP_API_BASE_URL='https://<cm_app_name>-funcapp.azurewebsites.net'
-```
-
-### Set your cm_app_name to azure-functions-apps.yml file
-
-Open `azure-functions-apps.yml` file at `CongestionMonitor\.github\workflows` and set `<cm_app_name>` to `AZURE_FUNCTIONAPP_NAME` value.
-
-```yml
-env:
-  AZURE_FUNCTIONAPP_NAME: <cm_app_name>-funcapp  # set <cm_app_name> to your application's name
 ```
 
 ### Commit changes and push your local repository to the GitHub repo.
@@ -257,9 +247,57 @@ Once the camera app has been started, a data item that recorded the face count w
 
 ![Cosmos DB Item](Documentation/Images/cm_cosmosdbitem.png)
 
+## Deploy Function App for Congestion Monitor
+
+Once the deployment with ARM Template has been succeeded, you can see a Function App resource in the resource group used by the Congestion Monitor. To use the Function App, you need to build and deploy the source codes on the repo to the Function App. In this repo, a workflow file for the Function App has already been prepared. So, you can run the workflow after updating with your `cm_app_name` value as follows.
+
+### Set up Publish Profile for Azure Functions
+
+First, you need to set up Publish Profile for Azure Functions as Actions secrets. Open the Function App on your Azure Portal and click `Get publish profile` to download the profile.
+
+![Get Publish Profile for Function App - 1](Documentation/Images/cm_publishprofile.png)
+
+And, open the `Publish Profile (the name is like *.PublishSettings)` in any text editor, select all text, and copy the text to your clipboard.
+
+![Get Publish Profile for Function App - 2](Documentation/Images/cm_publishprofile2.png)
+
+Open your GitHub repo of CongestionMonitor and access to `Actions secrets` in the `Settings` menu, and click `New repository secret`.
+
+![Create secret - 1](Documentation/Images/cm_gh_secret.png)
+
+Set `AZURE_FUNCTIONAPP_PUBLISH_PROFILE` in the `Name` textbox, paste `Publish Profile` that you copied to your clipboard above in the `Value` textbox, and click `Add secret`.
+
+![Create secret - 2](Documentation/Images/cm_gh_secret2.png)
+
+### Set your cm_app_name to azure-functions-apps.yml file on GitHub repo
+
+Open `azure-functions-apps.yml` file at `CongestionMonitor\.github\workflows` on GitHub and click `Edit this file` button to enter edit mode.
+
+![Update Workflow on GitHub - 1](Documentation/Images/cm_gh_updateworkflow.png)
+
+Then, set `<cm_app_name>` to your application's name that you set at `parameters.json` in `CongestionMonitor/ARMTemplate`.
+
+```yml
+env:
+  AZURE_FUNCTIONAPP_NAME: <cm_app_name>-funcapp  # set <cm_app_name> to your application's name
+```
+
+Finally, click `Start commit` button and click `Commit changes` to save the modification.
+
+![Update Workflow on GitHub - 2](Documentation/Images/cm_gh_updateworkflow2.png)
+
+Once it was updated, GitHub Actions runs the workflow and the Function App was deployed.
+
+![Run Workflow on GitHub - 1](Documentation/Images/cm_run_actions.png)
+
+![Run Workflow on GitHub - 2](Documentation/Images/cm_run_actions2.png)
+
+
 ### Confrim Congestion Status on Static Web App
 
 This project is using Azure Static Web Apps for the dashboard to show the congestion monitor status. [Azure Static Web Apps](https://docs.microsoft.com/en-us/azure/static-web-apps/overview) is a service that automatically builds and deploys full stack web apps to Azure from a GitHub repository.
+
+> Azure Static Web Apps provides serverless API endpoints via Azure Functions. But, triggers are limited to `HTTP` at this moment. In this project, Change feed in Cosmos DB and `CosmosDBTrigger` in the Function App are used. That's why the Function App is separated from the Static Web App project.
 
 Once the deployment has been succeeded, you can see a Static Web App resource in the resource group.
 
@@ -279,12 +317,7 @@ This web application is built with Vue.js and is deployed by GitHub Actions work
 
 ## CI/CD deployment using Azure DevOps
 
-Maybe, to be updated...
-
-
-## Azure deployment
-
-[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https://github.com/chack411/CongestionMonitor/blob/master/ARMTemplates/template.json)
+If you are an Azure DevOps user, you can refer to Azure Pipeline YAML files in the `Pipelines` directory in your repo and can run pipelines for ARM deployment, Function App deployment, and building Console Camera app.
 
 ## Build Status
 
