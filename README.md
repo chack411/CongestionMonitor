@@ -21,7 +21,6 @@ One of the important things is that most people have a mask on the face right no
 * Azure Cosmos DB
 * Azure Cognitive Services
 * Azure Static Web Apps
-* Azure Storage
 * Azure Application Insights
 * Azure Resource Manager
 * GitHub Actions
