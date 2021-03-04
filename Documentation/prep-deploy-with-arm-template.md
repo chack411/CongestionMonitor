@@ -112,4 +112,4 @@ Once the deployment has been succeeded, you can see resources in the resource gr
 And also, you can see parameters you need when configuring the camera console apps in the deployment outputs.
 
 ---
-[Home](../README.md) | [Next](build-camera-console-app.md)
+[Home](https://github.com/chack411/CongestionMonitor) | [TOC](https://github.com/chack411/CongestionMonitor#deploy-and-run-with-this-repo-using-azure-cli-and-github-actions) | [Next](build-camera-console-app.md)

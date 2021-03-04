@@ -44,4 +44,4 @@ Once it was updated, GitHub Actions runs the workflow and the Function App will 
 ![Run Workflow on GitHub - 2](Images/cm_run_actions2.png)
 
 ---
-[Home](../README.md) | [Back](build-camera-console-app.md) | [Next](comfirm-static-web-app.md)
+[Home](https://github.com/chack411/CongestionMonitor) | [TOC](https://github.com/chack411/CongestionMonitor#deploy-and-run-with-this-repo-using-azure-cli-and-github-actions) | [Back](build-camera-console-app.md) | [Next](comfirm-static-web-app.md)

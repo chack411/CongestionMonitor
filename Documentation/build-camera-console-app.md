@@ -95,4 +95,4 @@ Once the camera app has been started, a data item that recorded the face count w
 ![Cosmos DB Item](Images/cm_cosmosdbitem.png)
 
 ---
-[Home](../README.md) | [Back](prep-deploy-with-arm-template.md) | [Next](deploy-function-app.md)
+[Home](https://github.com/chack411/CongestionMonitor) | [TOC](https://github.com/chack411/CongestionMonitor#deploy-and-run-with-this-repo-using-azure-cli-and-github-actions) | [Back](prep-deploy-with-arm-template.md) | [Next](deploy-function-app.md)
