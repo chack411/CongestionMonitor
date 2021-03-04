@@ -3,10 +3,10 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "cm_app_name": {
-            "value": "cmapptest0903"
+            "value": "<app resource prefix is here. Ex: mycmapptest>"
         },
         "sites_cm_repositoryUrl": {
-            "value": "https://github.com/chack411/CongestionMonitor"
+            "value": "https://github.com/<your repo name>/CongestionMonitor"
         },
         "sites_cm_repositoryToken": {
             "value": ""
