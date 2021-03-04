@@ -1,4 +1,4 @@
-## Build the Congestion Camera Console App
+## Build Congestion Camera Console App
 
 This camera console app is built on .NET 5 and requires access to Cosmos DB and Cognitive Service - Face API. For these connections, the application needs the endpoints and keys and keep these value in the local environment securely.
 
