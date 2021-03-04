@@ -38,7 +38,30 @@ After that, clone your repo on GitHub to your local environment and start to dev
 git clone https://github.com/<yourRepoName>/CongestionMonitor.git
 ```
 
-## How to deploy with this repo manually
+## Deploy and run with this repo using Azure CLI and GitHub Actions
+
+1. [Prepare environments and deploy with ARM template](Documentation/prep-deploy-with-arm-template.md)
+1. [Build the Congestion Camera Console App](Documentation/build-camera-console-app.md)
+1. [Deploy Function App for Congestion Monitor](Documentation/deploy-function-app.md)
+1. [Confrim Congestion Status on Static Web App](Documentation/comfirm-static-web-app.md)
+
+## CI/CD deployment using Azure DevOps
+
+If you are an Azure DevOps user, you can refer to Azure Pipeline YAML files in the `Pipelines` directory in this repo and can run pipelines for ARM deployment, Function App deployment, and building Console Camera app.
+
+## Build Status
+
+|Project|Status|
+|---:|:---|
+|Azure Functions App|[![Azure Function App for Congestion APIs](https://github.com/chack411/CongestionMonitor/actions/workflows/azure-functions-apps.yml/badge.svg)](https://github.com/chack411/CongestionMonitor/actions/workflows/azure-functions-apps.yml)|
+|Static Web App|[![Static Web for Congestion Status](https://github.com/chack411/CongestionMonitor/actions/workflows/azure-static-web-apps-green-sky-0eff05900.yml/badge.svg)](https://github.com/chack411/CongestionMonitor/actions/workflows/azure-static-web-apps-green-sky-0eff05900.yml)|
+
+## Contributing
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+---
+## temp
 
 Let's deploy Congestion Monitor applications using Azure CLI and ARM Template.
 
@@ -286,7 +309,7 @@ Finally, click `Start commit` button and click `Commit changes` to save the modi
 
 ![Update Workflow on GitHub - 2](Documentation/Images/cm_gh_updateworkflow2.png)
 
-Once it was updated, GitHub Actions runs the workflow and the Function App was deployed.
+Once it was updated, GitHub Actions runs the workflow and the Function App will be deployed.
 
 ![Run Workflow on GitHub - 1](Documentation/Images/cm_run_actions.png)
 
@@ -297,7 +320,7 @@ Once it was updated, GitHub Actions runs the workflow and the Function App was d
 
 This project is using Azure Static Web Apps for the dashboard to show the congestion monitor status. [Azure Static Web Apps](https://docs.microsoft.com/en-us/azure/static-web-apps/overview) is a service that automatically builds and deploys full stack web apps to Azure from a GitHub repository.
 
-> Azure Static Web Apps provides serverless API endpoints via Azure Functions. But, triggers are limited to `HTTP` at this moment. In this project, Change feed in Cosmos DB and `CosmosDBTrigger` in the Function App are used. That's why the Function App is separated from the Static Web App project.
+> Azure Static Web Apps can provide serverless API endpoints via Azure Functions. But, triggers are limited to `HTTP` at this moment. In this project, [Change Feed](https://docs.microsoft.com/en-us/azure/cosmos-db/change-feed) of Cosmos DB and `CosmosDBTrigger` of Azure Functions are used. That's why the Function App is separated from the Static Web App project.
 
 Once the deployment has been succeeded, you can see a Static Web App resource in the resource group.
 
@@ -314,18 +337,3 @@ This is an example of the Congestion Status. If you have multiple PC environment
 This web application is built with Vue.js and is deployed by GitHub Actions workflow.
 
 ![GitHub Actions workflow](Documentation/Images/cm_gha_workflow.png)
-
-## CI/CD deployment using Azure DevOps
-
-If you are an Azure DevOps user, you can refer to Azure Pipeline YAML files in the `Pipelines` directory in this repo and can run pipelines for ARM deployment, Function App deployment, and building Console Camera app.
-
-## Build Status
-
-|Project|Status|
-|---:|:---|
-|Azure Functions App|[![Azure Function App for Congestion APIs](https://github.com/chack411/CongestionMonitor/actions/workflows/azure-functions-apps.yml/badge.svg)](https://github.com/chack411/CongestionMonitor/actions/workflows/azure-functions-apps.yml)|
-|Static Web App|[![Static Web for Congestion Status](https://github.com/chack411/CongestionMonitor/actions/workflows/azure-static-web-apps-green-sky-0eff05900.yml/badge.svg)](https://github.com/chack411/CongestionMonitor/actions/workflows/azure-static-web-apps-green-sky-0eff05900.yml)|
-
-## Contributing
-
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
