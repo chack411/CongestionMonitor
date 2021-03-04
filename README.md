@@ -10,7 +10,7 @@ One of the important things is that most people have a mask on the face right no
 
 ## Architecture
 
-![Congestion Monitor](Documentation/Images/cm_architecrue.png)
+![Congestion Monitor](Documentation/Images/cm_architecture.png)
 
 ## Technology stack
 
