@@ -1,19 +1,21 @@
-name: Static Web for Congestion Status - CI/CD
+# Sample workflow for Azure Static Web Apps
+name: Azure Static Web Apps CI/CD
 
-on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'CongestionStaticWebVueApp/**'
-      - '.github/workflows/**'
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
-    branches:
-      - master
-    paths:
-      - 'CongestionStaticWebVueApp/**'
-      - '.github/workflows/**'
+on: workflow_dispatch
+# on:
+#   push:
+#     branches:
+#       - master
+#     paths:
+#       - 'CongestionStaticWebVueApp/**'
+#       - '.github/workflows/**'
+#   pull_request:
+#     types: [opened, synchronize, reopened, closed]
+#     branches:
+#       - master
+#     paths:
+#       - 'CongestionStaticWebVueApp/**'
+#       - '.github/workflows/**'
 
 jobs:
   build_and_deploy_job:
