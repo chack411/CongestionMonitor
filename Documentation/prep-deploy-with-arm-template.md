@@ -54,7 +54,7 @@ You need to modify `parameters.json` in `CongestionMonitor/ARMTemplate` with you
             "value": "<app resource prefix is here. Ex: mycmapptest>"
         },
         "sites_cm_repositoryUrl": {
-            "value": "https://github.com/<your repo name>/CongestionMonitor"
+            "value": "https://github.com/<your account name here>/<your repo name here>"
         },
         "sites_cm_repositoryToken": {
             "value": ""

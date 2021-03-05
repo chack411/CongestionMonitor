@@ -13,22 +13,12 @@ The Secret Manager tool of .NET is one of the good ways to keep secret values in
 </PropertyGroup>
 ```
 
-If you want to re-create the ID for your own console app, you can replace it with any text but should be unique. Or, you can create it using the following command in the project directory.
+If you want to re-create the ID for your own console app, you can replace it with any text but should be unique. Or, you can create it using the following command in the project directory after deleting the <UserSecretsId> line in the .csproj file.
 
 ```sh
 cd CongestionMonitor/CongestionCameraConsoleApp
 
 dotnet user-secrets init
-```
-
-The secret values are stored in a JSON configuration file in a system-protected user profile folder on the local machine.
-
-```sh
-# Windows
-%APPDATA%\Microsoft\UserSecrets\<user_secrets_id>\secrets.json
-
-# Linux / macOS
-~/.microsoft/usersecrets/<user_secrets_id>/secrets.json
 ```
 
 #### Set secrets
@@ -46,6 +36,16 @@ dotnet user-secrets set "Settings:Face_API_Endpoint" "<your face API endpoint ur
 dotnet user-secrets set "Settings:Face_API_Subscription_Key" "xxxxxxxxxxxxxxxxxxxxxxxxxxx"
 dotnet user-secrets set "Settings:FaceCountDB_Endpoint" "<your face count db endpoint url here>"
 dotnet user-secrets set "Settings:FaceCountDB_Key" "xxxxxxxxxxxxxxxxxxxxxxxxxxx"
+```
+
+Then, the secret values are stored in a JSON configuration file in a system-protected user profile folder on the local machine.
+
+```sh
+# Windows
+%APPDATA%\Microsoft\UserSecrets\<user_secrets_id>\secrets.json
+
+# Linux / macOS
+~/.microsoft/usersecrets/<user_secrets_id>/secrets.json
 ```
 
 You can also refer to the sample secrets.json file - `sample-secrets.json` in this repository.
