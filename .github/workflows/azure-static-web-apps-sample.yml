@@ -1,5 +1,5 @@
 # Sample workflow for Azure Static Web Apps
-name: Azure Static Web Apps CI/CD
+name: Sample for Azure Static Web Apps CI/CD
 
 on: workflow_dispatch
 # on:
