@@ -13,7 +13,7 @@ The Secret Manager tool of .NET is one of the good ways to keep secret values in
 </PropertyGroup>
 ```
 
-If you want to re-create the ID for your own console app, you can replace it with any text but should be unique. Or, you can create it using the following command in the project directory after deleting the <UserSecretsId> line in the .csproj file.
+If you want to re-create the ID for your own console app, you can replace it with any text but should be unique. Or, you can create it using the following command in the project directory after deleting the `UserSecretsId` line in the `.csproj` file.
 
 ```sh
 cd CongestionMonitor/CongestionCameraConsoleApp
