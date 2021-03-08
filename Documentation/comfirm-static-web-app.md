@@ -21,4 +21,4 @@ This web application is built with Vue.js and is deployed by GitHub Actions work
 ![GitHub Actions workflow](Images/cm_gha_workflow.png)
 
 ---
-[Home](https://github.com/chack411/CongestionMonitor) | [TOC](https://github.com/chack411/CongestionMonitor#deploy-and-run-with-this-repo-using-azure-cli-and-github-actions) | [Back](deploy-function-app.md)
+[Home](https://github.com/chack411/CongestionMonitor) | [TOC](https://github.com/chack411/CongestionMonitor#deploy-and-run-with-this-repo-using-azure-cli-and-github-actions) | [Back](build-camera-console-app.md)

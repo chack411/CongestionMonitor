@@ -1,4 +1,4 @@
-## Prepare environments and deploy with ARM template
+## Deploy Azure resources with ARM template using Azure CLI
 
 Let's deploy Congestion Monitor applications using Azure CLI and ARM Template.
 
@@ -43,7 +43,7 @@ You can see the new token only once. So, let's copy and keep it for the next ste
 
 ### Modify parameters for your deployment
 
-You need to modify `parameters.json` in `CongestionMonitor/ARMTemplate` with your own parameters.
+You need to modify `parameters.json` in `ARMTemplate` with your own parameters.
 
 ```json
 {
@@ -51,10 +51,10 @@ You need to modify `parameters.json` in `CongestionMonitor/ARMTemplate` with you
     "contentVersion": "1.0.0.0",
     "parameters": {
         "cm_app_name": {
-            "value": "<app resource prefix is here. Ex: mycmapptest>"
+            "value": "{app resource prefix is here. Ex: mycmapptest}"
         },
         "sites_cm_repositoryUrl": {
-            "value": "https://github.com/<your account name here>/<your repo name here>"
+            "value": "https://github.com/{yourAccountName}/{yourRepoName}"
         },
         "sites_cm_repositoryToken": {
             "value": ""
@@ -67,20 +67,20 @@ You need to modify `parameters.json` in `CongestionMonitor/ARMTemplate` with you
 
 ### Set your cm_app_name to .env file
 
-Open `.env` file at `CongestionMonitor\CongestionStaticWebVueApp` and set `<cm_app_name>` that you set in `parameters.json` to `VUE_APP_API_BASE_URL` value.
+Open `.env` file in `CongestionStaticWebVueApp` directory and set `<cm_app_name>` that you set in `parameters.json` to `{APP_NAME}` of `VUE_APP_API_BASE_URL` value. The app name should be unique because it is used as base URL for your Azure Function App.
 
 ```text
-VUE_APP_API_BASE_URL='https://<cm_app_name>-funcapp.azurewebsites.net'
+VUE_APP_API_BASE_URL='https://{APP_NAME}-funcapp.azurewebsites.net'
 ```
 
 ### Commit changes and push your local repository to the GitHub repo.
 
-Entering the following commands, you make a change to the files on your computer, commit the changes locally, and push the commit to the repo on GitHub.
+If you have cloned your repo to your local environment, entering the following commands, you make a change to the files on your computer, commit the changes locally, and push the commit to the repo on GitHub.
 
 ```sh
 cd CongestionMonitor
 git add .
-git commit -m "update cm_app_name"
+git commit -m "update cm_app_name in .env file"
 git push -u origin master
 ```
 
@@ -91,16 +91,16 @@ git push -u origin master
 OK, it's time to deploy with ARM template. Let's create a deployment from a local template file: `template.json`, using parameters from a local JSON file: `parameters.json`.
 
 ```sh
-cd CongestionMonitor/ARMTemplate
+cd ARMTemplate
 
-az group create -g <yourResourceGroupName> -l japaneast
+az group create -g {yourResourceGroupName} -l japaneast
 
 az deployment group create \
-  --name <yourDeploymentName> \
-  --resource-group <yourResourceGroupName> \
+  --name {yourDeploymentName} \
+  --resource-group {yourResourceGroupName} \
   --template-file template.json \
   --parameters @parameters.json \
-  --parameters sites_cm_repositoryToken=<GitHub personal access token here>
+  --parameters sites_cm_repositoryToken={GitHub personal access token here}
 ```
 
 ![ARM Deployment](Images/cm_deployment.png)
@@ -112,4 +112,4 @@ Once the deployment has been succeeded, you can see resources in the resource gr
 And also, you can see parameters you need when configuring the camera console apps in the deployment outputs.
 
 ---
-[Home](https://github.com/chack411/CongestionMonitor) | [TOC](https://github.com/chack411/CongestionMonitor#deploy-and-run-with-this-repo-using-azure-cli-and-github-actions) | [Next](build-camera-console-app.md)
+[Home](https://github.com/chack411/CongestionMonitor) | [TOC](https://github.com/chack411/CongestionMonitor#deploy-and-run-with-this-repo-using-azure-cli-and-github-actions) | [Back](deploy-arm-and-function-app.md)

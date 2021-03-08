@@ -40,9 +40,8 @@ git clone https://github.com/{yourGitHubAccountName}/{yourRepoName}.git
 
 ## Deploy and run with this repo using Azure CLI and GitHub Actions
 
-1. [Prepare environments and deploy with ARM template](Documentation/prep-deploy-with-arm-template.md)
+1. [Prepare environments and deploy Azure resources using GitHub Actions](Documentation/deploy-arm-and-function-app.md)
 1. [Build Congestion Camera Console App](Documentation/build-camera-console-app.md)
-1. [Deploy Function App for Congestion Monitor](Documentation/deploy-function-app.md)
 1. [Confrim Congestion Status on Static Web App](Documentation/comfirm-static-web-app.md)
 
 ## CI/CD deployment using Azure DevOps

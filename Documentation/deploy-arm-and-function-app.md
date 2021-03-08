@@ -1,4 +1,4 @@
-## Prepare environments and deploy with ARM template
+## Prepare environments and deploy Azure resources using GitHub Actions
 
 Let's deploy Congestion Monitor applications using GitHub Actions and ARM Template.
 
@@ -149,27 +149,10 @@ And also, you can see parameters you need when configuring the camera console ap
 
 ![Deployment Outputs](Images/cm_deployment_outputs.png)
 
-
 ---
+### (Option) Deploy Azure resources using Azure CLI
 
-### Create a deployment and start to deploy
-
-OK, it's time to deploy with ARM template. Let's create a deployment from a local template file: `template.json`, using parameters from a local JSON file: `parameters.json`.
-
-```sh
-cd ARMTemplate
-
-az group create -g {yourResourceGroupName} -l japaneast
-
-az deployment group create \
-  --name {yourDeploymentName} \
-  --resource-group {yourResourceGroupName} \
-  --template-file template.json \
-  --parameters @parameters.json \
-  --parameters sites_cm_repositoryToken={GitHub personal access token here}
-```
-
-
+If you want to deploy Azure resources manually using Azure CLI, see [Deploy Azure resources with ARM template using Azure CLI](deploy-with-arm-template.md).
 
 ---
 [Home](https://github.com/chack411/CongestionMonitor) | [TOC](https://github.com/chack411/CongestionMonitor#deploy-and-run-with-this-repo-using-azure-cli-and-github-actions) | [Next](build-camera-console-app.md)

@@ -21,7 +21,7 @@ cd CongestionMonitor/CongestionCameraConsoleApp
 dotnet user-secrets init
 ```
 
-#### Set secrets
+### Set secrets
 
 You can see and get the secret values that you need at the deployment output page on your Azure portal.
 
@@ -50,7 +50,7 @@ Then, the secret values are stored in a JSON configuration file in a system-prot
 
 You can also refer to the sample secrets.json file - `sample-secrets.json` in this repository.
 
-#### Build the console app
+### Build the console app
 
 Run the following command from the directory where the `CongestionCameraConsoleApp.csproj` file exists to build the console app for the Congestion Monitor.
 
@@ -95,4 +95,4 @@ Once the camera app has been started, a data item that recorded the face count w
 ![Cosmos DB Item](Images/cm_cosmosdbitem.png)
 
 ---
-[Home](https://github.com/chack411/CongestionMonitor) | [TOC](https://github.com/chack411/CongestionMonitor#deploy-and-run-with-this-repo-using-azure-cli-and-github-actions) | [Back](prep-deploy-with-arm-template.md) | [Next](deploy-function-app.md)
+[Home](https://github.com/chack411/CongestionMonitor) | [TOC](https://github.com/chack411/CongestionMonitor#deploy-and-run-with-this-repo-using-azure-cli-and-github-actions) | [Back](deploy-arm-and-function-app-.md) | [Next](comfirm-static-web-app.md)
