@@ -17,8 +17,8 @@ on:
       - '.github/workflows/arm-and-func-deploy.yml'
 
 env:
-  APP_NAME: 'mycmapps'
-  RESOURCEGROUP_NAME: 'mycmapps-rg'
+  APP_NAME: 'mycmapps0308'
+  RESOURCEGROUP_NAME: 'mycmapps0308-rg'
   RESOURCEGROUP_LOCATION: 'japaneast'
   AZURE_FUNCTIONAPP_PACKAGE_PATH: 'CongestionMonitorFunctionApp'
   DOTNET_VERSION: '3.1.x'
