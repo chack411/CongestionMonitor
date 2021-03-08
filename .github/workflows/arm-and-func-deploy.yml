@@ -1,0 +1,71 @@
+
+
+
+name: ARM and Azure Functions deployment
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    paths:
+      - 'CongestionMonitorFunctionApp/**'
+      - '.github/workflows/arm-and-func-deploy.yml'
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - master
+    paths:
+      - 'CongestionMonitorFunctionApp/**'
+      - '.github/workflows/arm-and-func-deploy.yml'
+
+env:
+  APP_NAME: 'mycmapps'
+  RESOURCEGROUP_NAME: 'mycmapps-rg'
+  RESOURCEGROUP_LOCATION: 'japaneast'
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'CongestionMonitorFunctionApp'
+  DOTNET_VERSION: '3.1.x'
+  SLOT_NAME: ''
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@master
+
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: 'Create Azure Resource Group'
+      shell: pwsh
+      run: |
+          az group create --name ${{ env.RESOURCEGROUP_NAME }} --location ${{ env.RESOURCEGROUP_LOCATION }}
+
+    - name: 'Create deployment with ARM Template'
+      shell: pwsh
+      run: |
+          az deployment group create --name '${{ env.APP_NAME }}-deployment' --resource-group ${{ env.RESOURCEGROUP_NAME }} --template-file ARMTemplates/template.json --parameters cm_app_name=${{ env.APP_NAME }} --parameters sites_cm_repositoryUrl='https://github.com/${{ github.repository }}' --parameters sites_cm_repositoryToken=${{ secrets.GH_PAT }}
+
+    - name: Setup .NET ${{ env.DOTNET_VERSION }} environment
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: 'Resolve project dependencies using dotnet CLI'
+      shell: pwsh
+      run: |
+        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+        dotnet build --configuration Release --output ./output
+        popd
+
+    - name: 'Run Azure Functions Action'
+      uses: Azure/functions-action@v1.3.1
+      with:
+        app-name: '${{ env.APP_NAME }}-funcapp'
+        package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+        slot-name: '${{ env.SLOT_NAME }}' # optional
+
+# For more samples to get started with GitHub Action workflows to deploy to Azure, refer to https://github.com/Azure/actions-workflow-samples
