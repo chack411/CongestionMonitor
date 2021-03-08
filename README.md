@@ -53,8 +53,7 @@ If you are an Azure DevOps user, you can refer to Azure Pipeline YAML files in t
 
 |Project|Status|
 |---:|:---|
-|Azure Functions App|[![Azure Function App for Congestion APIs](https://github.com/chack411/CongestionMonitor/actions/workflows/azure-functions-apps.yml/badge.svg)](https://github.com/chack411/CongestionMonitor/actions/workflows/azure-functions-apps.yml)|
-|Static Web App|[![Static Web for Congestion Status](https://github.com/chack411/CongestionMonitor/actions/workflows/azure-static-web-apps-green-sky-0eff05900.yml/badge.svg)](https://github.com/chack411/CongestionMonitor/actions/workflows/azure-static-web-apps-green-sky-0eff05900.yml)|
+|ARM and Function App|[![ARM and Azure Functions deployment](https://github.com/chack411/CongestionMonitor/actions/workflows/arm-and-func-deploy.yml/badge.svg)](https://github.com/chack411/CongestionMonitor/actions/workflows/arm-and-func-deploy.yml)|
 
 ## Contributing
 
