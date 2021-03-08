@@ -1,8 +1,8 @@
 # Sample workflow for Azure Static Web Apps
 name: Sample for Azure Static Web Apps CI/CD
 
-on: workflow_dispatch
-# on:
+on: 
+  workflow_dispatch:
 #   push:
 #     branches:
 #       - master
