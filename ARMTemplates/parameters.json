@@ -3,10 +3,10 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "cm_app_name": {
-            "value": "<app resource prefix is here. Ex: mycmapptest>"
+            "value": "{app resource prefix is here. Ex: mycmapptest}"
         },
         "sites_cm_repositoryUrl": {
-            "value": "https://github.com/<your account name here>/<your repo name here>"
+            "value": "https://github.com/{yourAccountName}/{yourRepoName}"
         },
         "sites_cm_repositoryToken": {
             "value": ""

@@ -35,7 +35,7 @@ This repo is setting up as a Template Repository. So, you can create a new GitHu
 After that, clone your repo on GitHub to your local environment and start to develop your own Congestion Monitor!
 
 ```sh
-git clone https://github.com/<yourRepoName>/CongestionMonitor.git
+git clone https://github.com/{yourGitHubAccountName}/{yourRepoName}.git
 ```
 
 ## Deploy and run with this repo using Azure CLI and GitHub Actions
