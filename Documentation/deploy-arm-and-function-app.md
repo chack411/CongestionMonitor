@@ -59,7 +59,7 @@ See [Configure deployment credentials](https://github.com/marketplace/actions/az
 
 > if you have an error when creating a service principal, and you don't have permission to create it, you need to ask the administrator to create the service principal for you.
 
-### Create a Secret with the servicde principal JSON output
+### Create a secret with the servicde principal JSON output
 
 Open your GitHub repo of CongestionMonitor and access to `Secrets` in the `Settings` menu, and click `New repository secret`.
 
