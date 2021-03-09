@@ -121,7 +121,14 @@ namespace CongestionCameraConsoleApp
             grabber.AnalysisFunction = async frame =>
             {
                 // Encode image and submit to Face API.
-                return await faceClient.Face.DetectWithStreamAsync(frame.Image.ToMemoryStream(".jpg"), true, false, faceAttributes);
+                // return await faceClient.Face.DetectWithStreamAsync(frame.Image.ToMemoryStream(".jpg"), true, false, faceAttributes);
+                return await faceClient.Face.DetectWithStreamAsync(frame.Image.ToMemoryStream(".jpg"), true, false,
+                    // Hope this "mask" attribute will be added to Face .NET SDK soon
+                    //returnFaceAttributes: new List<FaceAttributeType?> { FaceAttributeType.Mask }, 
+                    // The recognition_04 model (published 2021) is the most accurate model currently available.
+                    recognitionModel: "recognition_04", returnRecognitionModel: true, 
+                    // The detection_03 model (published 2021) is the latest model that should be used with recognition_04 model.
+                    detectionModel: "detection_03");
             };
 
             // Set up a listener for when we receive a new result from an API call. 
@@ -133,7 +140,8 @@ namespace CongestionCameraConsoleApp
                     Console.WriteLine("API call threw an exception.");
                 else
                 {
-                    long maskCount = GetMaskCount(e.Analysis);
+                    // TODO: onse the "mask" attribute has been added to Face .NET SDK, implement a new GetMaskCount.
+                    long maskCount = 0; // GetMaskCount(e.Analysis);
                     faceCountDB.UpdateFaceCount(e.Analysis.Count, maskCount, appSettings.PlaceName);
                     Console.WriteLine("New result received for frame acquired at {0}. {1} faces, {2} masks detected", e.Frame.Metadata.Timestamp, e.Analysis.Count, maskCount);
                 }
@@ -155,6 +163,7 @@ namespace CongestionCameraConsoleApp
             grabber.StopProcessingAsync().Wait();
         }
 
+        // This method is for the default model (recognition_01 and detection_01)
         private static long GetMaskCount(IList<DetectedFace> faces)
         {
             long maskCount = 0;
