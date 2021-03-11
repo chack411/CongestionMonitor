@@ -33,7 +33,16 @@
 
 using System;
 using System.IO;
+using System.Text.Json;
 using System.Collections.Generic;
+using System.Web;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using Microsoft.Rest;
+using Microsoft.Rest.Serialization;
+using Newtonsoft.Json;
 using VideoFrameAnalyzer;
 using Microsoft.Azure.CognitiveServices.Vision.Face;
 using Microsoft.Azure.CognitiveServices.Vision.Face.Models;
@@ -121,14 +130,19 @@ namespace CongestionCameraConsoleApp
             grabber.AnalysisFunction = async frame =>
             {
                 // Encode image and submit to Face API.
-                // return await faceClient.Face.DetectWithStreamAsync(frame.Image.ToMemoryStream(".jpg"), true, false, faceAttributes);
-                return await faceClient.Face.DetectWithStreamAsync(frame.Image.ToMemoryStream(".jpg"), true, false,
+
+                // After the "mask' attribute is supported on the latest Face .NET SDK,
+                // will replace this method with DetectWithStreamAsync.
+                return await CallFaceApiAsync(frame.Image.ToMemoryStream(".jpg"), appSettings);
+
+                //return await faceClient.Face.DetectWithStreamAsync(frame.Image.ToMemoryStream(".jpg"), true, false, faceAttributes);
+                //return await faceClient.Face.DetectWithStreamAsync(frame.Image.ToMemoryStream(".jpg"), true, false,
                     // Hope this "mask" attribute will be added to Face .NET SDK soon
                     //returnFaceAttributes: new List<FaceAttributeType?> { FaceAttributeType.Mask }, 
                     // The recognition_04 model (published 2021) is the most accurate model currently available.
-                    recognitionModel: "recognition_04", returnRecognitionModel: true, 
+                    //recognitionModel: "recognition_04", returnRecognitionModel: true, 
                     // The detection_03 model (published 2021) is the latest model that should be used with recognition_04 model.
-                    detectionModel: "detection_03");
+                    //detectionModel: "detection_03");
             };
 
             // Set up a listener for when we receive a new result from an API call. 
@@ -140,8 +154,7 @@ namespace CongestionCameraConsoleApp
                     Console.WriteLine("API call threw an exception.");
                 else
                 {
-                    // TODO: onse the "mask" attribute has been added to Face .NET SDK, implement a new GetMaskCount.
-                    long maskCount = 0; // GetMaskCount(e.Analysis);
+                    long maskCount = GetMaskCount2021(e.Analysis);
                     faceCountDB.UpdateFaceCount(e.Analysis.Count, maskCount, appSettings.PlaceName);
                     Console.WriteLine("New result received for frame acquired at {0}. {1} faces, {2} masks detected", e.Frame.Metadata.Timestamp, e.Analysis.Count, maskCount);
                 }
@@ -164,7 +177,7 @@ namespace CongestionCameraConsoleApp
         }
 
         // This method is for the default model (recognition_01 and detection_01)
-        private static long GetMaskCount(IList<DetectedFace> faces)
+        private static long GetMaskCount(IList<Microsoft.Azure.CognitiveServices.Vision.Face.Models.DetectedFace> faces)
         {
             long maskCount = 0;
             foreach (var face in faces)
@@ -174,6 +187,20 @@ namespace CongestionCameraConsoleApp
                     if (accessories.Type == AccessoryType.Mask)
                         ++maskCount;
                 }
+            }
+
+            return maskCount;
+        }
+
+        // This method is for the default model (recognition_04 and detection_03)
+        private static long GetMaskCount2021(IList<DetectedFace> faces)
+        {
+            long maskCount = 0;
+            foreach (var face in faces)
+            {
+                if (face.FaceAttributes.Mask.Type != "noMask" && 
+                    face.FaceAttributes.Mask.NoseAndMouthCovered == true)
+                    ++maskCount;
             }
 
             return maskCount;
@@ -192,6 +219,147 @@ namespace CongestionCameraConsoleApp
             };
 
             return switchMappings;
+        }
+
+        private static async Task<IList<DetectedFace>> CallFaceApiAsync(Stream image, AppSettings appSettings)
+        {            
+            using (var client = new HttpClient())
+            {
+                var content = new StreamContent(image);
+
+                var queryString = HttpUtility.ParseQueryString(string.Empty);
+
+                // Request headers
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", appSettings.Face_API_Subscription_Key);
+
+                // Request parameters
+                queryString["returnFaceId"] = "true";
+                queryString["returnFaceLandmarks"] = "false";
+                queryString["returnFaceAttributes"] = "mask";
+                queryString["recognitionModel"] = "recognition_04";
+                queryString["returnRecognitionModel"] = "true";
+                queryString["detectionModel"] = "detection_03";
+
+                var url = appSettings.Face_API_Endpoint + "face/v1.0/detect?" + queryString;
+                // var uri = "https://westus.api.cognitive.microsoft.com/face/v1.0/detect?" + queryString;
+
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+                var httpResponse = await client.PostAsync(url, content);
+
+                if (httpResponse.StatusCode == HttpStatusCode.OK)
+                {
+                    IList<DetectedFace> _body;
+
+                    var deserializationSettings = new JsonSerializerSettings
+                    {
+                        DateFormatHandling = Newtonsoft.Json.DateFormatHandling.IsoDateFormat,
+                        DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc,
+                        NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore,
+                        ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Serialize,
+                        ContractResolver = new ReadOnlyJsonContractResolver(),
+                        Converters = new List<JsonConverter>
+                        {
+                            new Iso8601TimeSpanConverter()
+                        }
+                    };
+
+                    var _responseContent = await httpResponse.Content.ReadAsStringAsync();
+                    try
+                    {
+                        _body = SafeJsonConvert.DeserializeObject<IList<DetectedFace>>(_responseContent, deserializationSettings);
+                    }
+                    catch (System.Text.Json.JsonException ex)
+                    {
+                        throw new SerializationException("Unable to deserialize the response.", _responseContent, ex);
+                    }
+
+                    return _body;
+                }
+
+                return null;
+            }
+        }
+    }
+
+    // Mask, FaceAttributes2, and DetectedFace2 are tentative implementations until the Face .NET SDK is updated.
+    public class Mask
+    {
+        public Mask()
+        {
+        }
+
+        public Mask(string type = default(string), bool noseAndMouthCovered = default(bool))
+        {
+            Type = type;
+            NoseAndMouthCovered = noseAndMouthCovered;
+        }
+
+        [JsonProperty(PropertyName = "type")]
+        public string Type { get; set; }
+
+        [JsonProperty(PropertyName = "noseAndMouthCovered")]
+        public bool NoseAndMouthCovered { get; set; }
+    }
+
+    public class FaceAttributes
+    {
+        public FaceAttributes()
+        {
+        }
+
+        public FaceAttributes(Mask mask = default(Mask))
+        {
+            Mask = mask;
+        }
+
+        [JsonProperty(PropertyName = "mask")]
+        public Mask Mask { get; set; }
+    }
+
+    public class DetectedFace
+    {
+        public DetectedFace()
+        {
+        }
+
+        public DetectedFace(FaceRectangle faceRectangle, System.Guid? faceId = default(System.Guid?), string recognitionModel = default(string), FaceLandmarks faceLandmarks = default(FaceLandmarks), FaceAttributes faceAttributes = default(FaceAttributes))
+        {
+            FaceId = faceId;
+            RecognitionModel = recognitionModel;
+            FaceRectangle = faceRectangle;
+            FaceLandmarks = faceLandmarks;
+            FaceAttributes = faceAttributes;
+        }
+
+        [JsonProperty(PropertyName = "faceId")]
+        public System.Guid? FaceId { get; set; }
+
+        [JsonProperty(PropertyName = "recognitionModel")]
+        public string RecognitionModel { get; set; }
+
+        [JsonProperty(PropertyName = "faceRectangle")]
+        public FaceRectangle FaceRectangle { get; set; }
+
+        [JsonProperty(PropertyName = "faceLandmarks")]
+        public FaceLandmarks FaceLandmarks { get; set; }
+
+        [JsonProperty(PropertyName = "faceAttributes")]
+        public FaceAttributes FaceAttributes { get; set; }
+
+        public virtual void Validate()
+        {
+            if (FaceRectangle == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "FaceRectangle");
+            }
+            if (FaceRectangle != null)
+            {
+                FaceRectangle.Validate();
+            }
+            if (FaceLandmarks != null)
+            {
+                FaceLandmarks.Validate();
+            }
         }
     }
 }

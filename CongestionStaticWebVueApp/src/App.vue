@@ -32,7 +32,7 @@
                 <td class="mask-ratio">
                     <transition name="fade" mode="out-in">
                         <span :key="result.maskRatio">
-                            {{ result.maskRatio }} %
+                            {{ result.maskRatio }} % {{ result.maskStatus }}
                         </span>
                     </transition>
                 </td>
@@ -51,16 +51,23 @@
     const indicator = {
         up: {
             mark: '▲',
-            color: 'rgb(255, 148, 148)'
+            color: 'rgb(232, 18, 36)'
         },
         down: {
             mark: '▼',
-            color: 'rgb(154, 240, 117)'
+            color: 'rgb(0, 120, 215)'
         },
         stay: {
             mark: '－',
             color: 'gray'
         }
+    };
+    const status = {
+        awesome: '😍',
+        high: '😃',
+        middle: '😐',
+        low: '🙁',
+        bad: '😰'
     };
 
     export default {
@@ -144,11 +151,15 @@
                         Vue.set(result, 'indicatorColor', indicator.down.color);
                     }
 
-                    Vue.set(result, 'maskRatio', this.getMaskRatio(countResult));
+                    var ratio = this.getMaskRatio(countResult);
+                    var status = this.getMaskStatus(countResult, ratio);
+                    Vue.set(result, 'maskRatio', ratio);
+                    Vue.set(result, 'maskStatus', status);
                     Vue.set(result, 'faceCount', countResult.faceCount);
 
                 } else {
                     countResult.maskRatio = this.getMaskRatio(countResult);
+                    countResult.maskStatus = this.getMaskStatus(countResult, countResult.maskRatio);
                     countResult.updown = indicator.stay.mark;
                     countResult.indicatorColor = indicator.stay.color;
                     this.results.push(countResult);
@@ -159,6 +170,20 @@
                     return Math.round(result.maskCount / result.faceCount * 100);
                 else
                     return 0;
+            },
+            getMaskStatus(result, ratio) {
+                if (result.faceCount == 0)
+                    return status.middle;
+                else if (ratio >= 100)
+                    return status.awesome;
+                else if (ratio > 80)
+                    return status.high;
+                else if (ratio > 50)
+                    return status.middle;
+                else if (ratio > 20)
+                    return status.low;
+                else
+                    return status.bad;
             }
         }
     }

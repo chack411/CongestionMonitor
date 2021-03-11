@@ -4,7 +4,7 @@ This repo is the Congestion Monitor project to detect congestion situations thro
 
 In 2020, I realized that I have created a demo for my customer in 2019 that the application is to detect faces and to show the number and the trend on the browser in realtime. Now, we are facing the COVID-19 situation, and the demand for congestion monitoring is getting higher. So, I decided to rebuild the demo application that I've created and to publish the repo as an Open Source.
 
-One of the important things is that most people have a mask on the face right now, so the capability of mask detection is required such an application. Fortunately, the Azure Cognitive Services - Face API can detect a face with a (small) mask. But, unfortunately, a large mask could result in no face being detected and the recognition rate with a mask is not good. But, if needed, you can replace face recognition with other AI services for the improvement of the recognition rate.
+One of the important things is that most people have a mask on the face right now, so the capability of mask detection is required such an application. Fortunately, the Azure Cognitive Services - Face API can detect a face with a mask. We can use the recognition_04 and the detection_03 models (published in 2021) with Face API and the API detects faces who are wearing a face cover (surgical mask, N95 mask, cloth mask) and return "faceMask" and "noseAndMouthCovered" attributes. For more information about this, please see: [Specify a face recognition model - Face API](https://docs.microsoft.com/en-us/azure/cognitive-services/face/face-api-how-to-topics/specify-recognition-model).
 
 ![Congestion Monitor Demo](Documentation/Images/cm_appsdemo.png)
 
