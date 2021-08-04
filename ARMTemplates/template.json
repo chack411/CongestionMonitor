@@ -375,6 +375,7 @@
                 "name": "Free"
             },
             "properties": {
+                "provider": "GitHub",
                 "repositoryUrl": "[parameters('sites_cm_repositoryUrl')]",
                 "branch": "[parameters('sites_cm_branch')]",
                 "repositoryToken": "[parameters('sites_cm_repositoryToken')]",
