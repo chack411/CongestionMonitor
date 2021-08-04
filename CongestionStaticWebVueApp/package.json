@@ -14,6 +14,7 @@
   "dependencies": {
     "@aspnet/signalr": "^1.1.4",
     "axios": "^0.21.1",
+    "color-string": "^1.6.0",
     "vue": "^2.6.12"
   },
   "devDependencies": {
