@@ -14,16 +14,17 @@
   "dependencies": {
     "@aspnet/signalr": "^1.1.4",
     "axios": "^0.21.1",
-    "color-string": "^1.6.0",
-    "vue": "^2.6.12"
+    "vue": "^2.6.14"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.12.16",
-    "@vue/cli-plugin-babel": "~4.5.11",
-    "@vue/cli-plugin-eslint": "~4.5.11",
-    "@vue/cli-service": "~4.5.11",
-    "eslint-plugin-vue": "^7.6.0",
-    "vue-template-compiler": "^2.6.12"
+    "@babel/eslint-parser": "^7.15.0",
+    "@vue/cli-plugin-babel": "~4.5.13",
+    "@vue/cli-plugin-eslint": "~4.5.13",
+    "@vue/cli-service": "~4.5.13",
+    "eslint-plugin-vue": "^7.16.0",
+    "vue-template-compiler": "^2.6.14",
+    "color-string": "^1.6.0",
+    "path-parse": "^1.0.7"
   },
   "eslintConfig": {
     "root": true,
