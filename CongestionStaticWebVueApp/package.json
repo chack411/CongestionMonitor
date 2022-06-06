@@ -13,17 +13,17 @@
   },
   "dependencies": {
     "@aspnet/signalr": "^1.1.4",
-    "axios": "^0.21.1",
-    "vue": "^2.6.14"
+    "axios": "^0.27.2",
+    "vue": "^3.2.36"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.15.0",
-    "@vue/cli-plugin-babel": "~4.5.13",
-    "@vue/cli-plugin-eslint": "~4.5.13",
-    "@vue/cli-service": "~4.5.13",
-    "eslint-plugin-vue": "^7.16.0",
+    "@babel/eslint-parser": "^7.18.2",
+    "@vue/cli-plugin-babel": "~5.0.4",
+    "@vue/cli-plugin-eslint": "~5.0.4",
+    "@vue/cli-service": "~5.0.4",
+    "eslint-plugin-vue": "^9.1.0",
     "vue-template-compiler": "^2.6.14",
-    "color-string": "^1.6.0",
+    "color-string": "^1.9.1",
     "path-parse": "^1.0.7"
   },
   "eslintConfig": {
